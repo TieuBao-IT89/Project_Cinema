@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -18,8 +18,8 @@
                         </div>
                         <p class="movie-description">Cuộc chiến cuối cùng của các siêu anh hùng để cứu vũ trụ khỏi sự hủy diệt hoàn toàn.</p>
                         <div class="movie-actions">
-                            <a href="movies.html#now-showing" class="btn btn-primary">Đặt vé</a>
-                            <a href="movie-details.html" class="btn btn-secondary">
+                            <a asp-controller="Movie" asp-action="Index" asp-fragment="now-showing" class="btn btn-primary">Đặt vé</a>
+                            <a asp-controller="Movie" asp-action="Details" asp-route-id="1" class="btn btn-secondary">
                                 <i class="fas fa-play"></i> Xem trailer
                             </a>
                         </div>
@@ -41,8 +41,8 @@
                         </div>
                         <p class="movie-description">Peter Parker phải đối mặt với những thách thức lớn nhất trong cuộc đời mình.</p>
                         <div class="movie-actions">
-                            <a href="movies.html#now-showing" class="btn btn-primary">Đặt vé</a>
-                            <a href="movie-details.html" class="btn btn-secondary">
+                            <a asp-controller="Movie" asp-action="Index" asp-fragment="now-showing" class="btn btn-primary">Đặt vé</a>
+                            <a asp-controller="Movie" asp-action="Details" asp-route-id="2" class="btn btn-secondary">
                                 <i class="fas fa-play"></i> Xem trailer
                             </a>
                         </div>
@@ -64,8 +64,8 @@
                         </div>
                         <p class="movie-description">Cuộc hành trình đến hành tinh sa mạc nguy hiểm nhất trong vũ trụ.</p>
                         <div class="movie-actions">
-                            <a href="movies.html#now-showing" class="btn btn-primary">Đặt vé</a>
-                            <a href="movie-details.html" class="btn btn-secondary">
+                            <a asp-controller="Movie" asp-action="Index" asp-fragment="now-showing" class="btn btn-primary">Đặt vé</a>
+                            <a asp-controller="Movie" asp-action="Details" asp-route-id="3" class="btn btn-secondary">
                                 <i class="fas fa-play"></i> Xem trailer
                             </a>
                         </div>
@@ -142,59 +142,10 @@
 </section>
 
 <!-- Now Showing Movies -->
-<section id="now-showing" class="movies-section">
-    <div class="container">
-        <h2 class="section-title">Phim đang chiếu</h2>
-        <div class="movies-grid">
-            <div class="movie-card">
-                <div class="movie-poster">
-                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300" alt="Avengers: Endgame">
-                    <div class="movie-overlay">
-                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
-                        <a href="movies.html#now-showing" class="btn btn-sm btn-primary">Đặt vé</a>
-                    </div>
-                </div>
-                <div class="movie-info">
-                    <h3 class="movie-name">Avengers: Endgame</h3>
-                    <div class="movie-details">
-                        <span class="genre">Hành động</span>
-                        <span class="duration">181 phút</span>
-                    </div>
-                </div>
-            </div>
-
-            
-        </div>
-    </div>
-</section>
+@await Component.InvokeAsync("NowShowingMovies", new { count = 6 })
 
 <!-- Coming Soon Movies -->
-<section id="coming-soon" class="movies-section coming-soon">
-    <div class="container">
-        <h2 class="section-title">Phim sắp chiếu</h2>
-        <div class="movies-grid">
-            <div class="movie-card">
-                <div class="movie-poster">
-                    <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=300" alt="Coming Soon 1">
-                    <div class="coming-soon-badge">Sắp chiếu</div>
-                    <div class="movie-overlay">
-                        <a href="#" class="btn btn-sm">Xem chi tiết</a>
-                    </div>
-                </div>
-                <div class="movie-info">
-                    <h3 class="movie-name">Black Panther: Wakanda Forever</h3>
-                    <div class="movie-details">
-                        <span class="genre">Hành động</span>
-                        <span class="release-date">
-                            <i class="fas fa-calendar"></i> 11/11/2024
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
+@await Component.InvokeAsync("ComingSoonMovies", new { count = 6 })
 
 <!-- Promotions -->
 <section id="promotions" class="promotions-section">

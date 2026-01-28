@@ -1,0 +1,15 @@
+﻿@if (TempData["success"] != null)
+{
+    <div class="notification-modern alert-success-modern">
+        <i class="fas fa-check-circle"></i>
+        <span>@TempData["success"]</span>
+    </div>
+}
+
+@if (TempData["error"] != null)
+{
+    <div class="notification-modern alert-danger-modern">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>@TempData["error"]</span>
+    </div>
+}

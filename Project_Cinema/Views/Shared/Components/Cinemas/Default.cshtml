@@ -1,0 +1,23 @@
+@model IEnumerable<Project_Cinema.Models.CinemaModel>
+
+<div class="cinema-grid">
+    @foreach (var cinema in Model)
+    {
+        <div class="cinema-card">
+            <div class="cinema-card-content">
+                <h3 class="cinema-name">@cinema.CinemaName</h3>
+                <p class="cinema-address">
+                    <i class="fas fa-map-marker-alt"></i>
+                    @cinema.Address
+                </p>
+                @if (!string.IsNullOrWhiteSpace(cinema.Phone))
+                {
+                    <p class="cinema-phone">
+                        <i class="fas fa-phone"></i>
+                        @cinema.Phone
+                    </p>
+                }
+            </div>
+        </div>
+    }
+</div>

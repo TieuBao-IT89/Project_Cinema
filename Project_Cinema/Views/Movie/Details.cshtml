@@ -1,1 +1,56 @@
-﻿
+@model Project_Cinema.Models.MovieModel
+
+@{
+    ViewData["Title"] = "Chi tiết phim";
+}
+
+<section class="page-banner">
+    <div class="page-banner-overlay"></div>
+    <div class="page-banner-content">
+        <div class="container">
+            <h1 class="page-title">@Model.Title</h1>
+            <p class="page-subtitle">@Model.Description</p>
+        </div>
+    </div>
+</section>
+
+<section class="movie-details-section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4">
+                <div class="movie-poster">
+                    <img class="img-fluid rounded"
+                         src="@(string.IsNullOrWhiteSpace(Model.PosterUrl) ? $"https://via.placeholder.com/400x600?text={Model.Title}" : Model.PosterUrl)"
+                         alt="@Model.Title" />
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="movie-info">
+                    <h2 class="section-title">@Model.Title</h2>
+
+                    <div class="movie-meta mb-3">
+                        <div><strong>Thời lượng:</strong> @Model.DurationMin phút</div>
+                        <div><strong>Ngày phát hành:</strong> @(Model.ReleaseDate?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</div>
+                        <div><strong>Ngôn ngữ:</strong> @(Model.Language ?? "Chưa cập nhật")</div>
+                        <div><strong>Độ tuổi:</strong> @(Model.AgeRating ?? "Chưa cập nhật")</div>
+                        <div><strong>Trạng thái:</strong> @Model.Status</div>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.TrailerUrl))
+                    {
+                        <a class="btn btn-secondary me-2" href="@Model.TrailerUrl" target="_blank" rel="noopener noreferrer">
+                            <i class="fas fa-play"></i> Xem trailer
+                        </a>
+                    }
+
+                    <a class="btn btn-primary"
+                       asp-controller="Showtime"
+                       asp-action="Index"
+                       asp-route-movieId="@Model.MovieId">
+                        Đặt vé
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

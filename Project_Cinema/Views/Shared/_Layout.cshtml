@@ -1,27 +1,25 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>CinemaHub - Website Bán Vé Xem Phim Trực Tuyến</title>
-        <link rel="stylesheet" href="~/css/variables.css">
-        <link rel="stylesheet" href="~/css/base.css">
-        <link rel="stylesheet" href="~/css/header.css">
-        <link rel="stylesheet" href="~/css/banner.css">
-        <link rel="stylesheet" href="~/css/booking.css">
-        <link rel="stylesheet" href="~/css/movies.css">
-        <link rel="stylesheet" href="~/css/movies-page.css">
-        <link rel="stylesheet" href="~/css/promotions.css">
-        <link rel="stylesheet" href="~/css/footer.css">
-        <link rel="stylesheet" href="~/css/responsive.css">
-        <link rel="stylesheet" href="~/css/cinema.css">
-        <link rel="stylesheet" href="~/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    </head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CinemaHub - Website Bán Vé Xem Phim Trực Tuyến</title>
+    <link rel="stylesheet" href="~/css/variables.css">
+    <link rel="stylesheet" href="~/css/base.css">
+    <link rel="stylesheet" href="~/css/header.css">
+    <link rel="stylesheet" href="~/css/banner.css">
+    <link rel="stylesheet" href="~/css/booking.css">
+    <link rel="stylesheet" href="~/css/movies.css">
+    <link rel="stylesheet" href="~/css/movies-page.css">
+    <link rel="stylesheet" href="~/css/promotions.css">
+    <link rel="stylesheet" href="~/css/footer.css">
+    <link rel="stylesheet" href="~/css/responsive.css">
+    <link rel="stylesheet" href="~/css/cinema.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Header -->
@@ -39,7 +37,7 @@
                 <!-- Navigation Menu -->
                 <nav class="nav-menu">
                     <ul>
-                        <li><a asp-action="Index" asp-controller="Home" class="active">Trang chủ</a></li>
+                        <li><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
                         <li><a asp-action="Index" asp-controller="Movie">Phim</a></li>
                         <li><a asp-action="Index" asp-controller="Cinema">Rạp chiếu</a></li>
                         <li><a href="blog.html">Tin tức</a></li>
@@ -81,8 +79,8 @@
                     <h3>Liên kết nhanh</h3>
                     <ul>
                         <li><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
-                        <li><a href="movies.html#now-showing">Phim đang chiếu</a></li>
-                        <li><a href="movies.html#coming-soon">Phim sắp chiếu</a></li>
+                        <li><a asp-action="Index" asp-controller="Movie" asp-fragment="now-showing">Phim đang chiếu</a></li>
+                        <li><a asp-action="Index" asp-controller="Movie" asp-fragment="coming-soon">Phim sắp chiếu</a></li>
                         <li><a asp-action="Index" asp-controller="Cinema">Rạp chiếu</a></li>
                         <li><a href="promotion.html">Khuyến mãi</a></li>
                     </ul>
