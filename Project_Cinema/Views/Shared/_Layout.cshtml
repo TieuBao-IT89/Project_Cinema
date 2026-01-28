@@ -1,0 +1,143 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>CinemaHub - Website Bán Vé Xem Phim Trực Tuyến</title>
+        <link rel="stylesheet" href="~/css/variables.css">
+        <link rel="stylesheet" href="~/css/base.css">
+        <link rel="stylesheet" href="~/css/header.css">
+        <link rel="stylesheet" href="~/css/banner.css">
+        <link rel="stylesheet" href="~/css/booking.css">
+        <link rel="stylesheet" href="~/css/movies.css">
+        <link rel="stylesheet" href="~/css/movies-page.css">
+        <link rel="stylesheet" href="~/css/promotions.css">
+        <link rel="stylesheet" href="~/css/footer.css">
+        <link rel="stylesheet" href="~/css/responsive.css">
+        <link rel="stylesheet" href="~/css/cinema.css">
+        <link rel="stylesheet" href="~/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    </head>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <!-- Logo -->
+                <div class="logo">
+                    <a asp-action="Index" asp-controller="Home">
+                        <i class="fas fa-film"></i>
+                        <span>CinemaHub</span>
+                    </a>
+                </div>
+
+                <!-- Navigation Menu -->
+                <nav class="nav-menu">
+                    <ul>
+                        <li><a asp-action="Index" asp-controller="Home" class="active">Trang chủ</a></li>
+                        <li><a asp-action="Index" asp-controller="Movie">Phim</a></li>
+                        <li><a asp-action="Index" asp-controller="Cinema">Rạp chiếu</a></li>
+                        <li><a href="blog.html">Tin tức</a></li>
+                        <li><a href="contact.html">Liên hệ</a></li>
+                    </ul>
+                </nav>
+
+                <!-- Account Area -->
+                <div class="account-area">
+                    <a href="login.html" class="btn-login">Đăng nhập</a>
+                    <a href="register.html" class="btn-register"><span>Đăng ký</span></a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer id="contact" class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Về CinemaHub</h3>
+                    <p>CinemaHub là hệ thống bán vé xem phim trực tuyến hàng đầu, mang đến trải nghiệm xem phim tuyệt vời với chất lượng hình ảnh và âm thanh vượt trội.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Liên kết nhanh</h3>
+                    <ul>
+                        <li><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
+                        <li><a href="movies.html#now-showing">Phim đang chiếu</a></li>
+                        <li><a href="movies.html#coming-soon">Phim sắp chiếu</a></li>
+                        <li><a asp-action="Index" asp-controller="Cinema">Rạp chiếu</a></li>
+                        <li><a href="promotion.html">Khuyến mãi</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Hỗ trợ</h3>
+                    <ul>
+                        <li><a href="faq.html">Câu hỏi thường gặp</a></li>
+                        <li><a href="faq.html">Hướng dẫn đặt vé</a></li>
+                        <li><a href="faq.html">Chính sách đổi trả</a></li>
+                        <li><a href="terms.html">Điều khoản sử dụng</a></li>
+                        <li><a href="privacy.html">Chính sách bảo mật</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Liên hệ</h3>
+                    <ul class="contact-info">
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>123 Đường ABC, Quận XYZ, TP. Hồ Chí Minh</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <span>Hotline: 1900 1234</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <span>Email: support@cinemahub.vn</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock"></i>
+                            <span>Giờ làm việc: 8:00 - 22:00 hàng ngày</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 CinemaHub. Tất cả quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- JS -->
+    <script src="~/js/login.js"></script>
+    <script src="~/js/main.js"></script>
+    <script src="~/js/cinema.js"></script>
+    <script src="~/js/movies.js"></script>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

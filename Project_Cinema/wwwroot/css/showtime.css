@@ -1,0 +1,833 @@
+/* Showtime Page Styles - Modern Booking Design */
+
+/* Booking Progress Bar */
+.booking-progress {
+    margin-top: 70px;
+    padding: var(--spacing-xl) 0;
+    background: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.progress-steps {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1000px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.progress-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    position: relative;
+    z-index: 2;
+}
+
+.step-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    transition: all var(--transition-base);
+    background: var(--bg-secondary);
+    border: 3px solid var(--border-color);
+    color: var(--text-secondary);
+}
+
+.progress-step.completed .step-icon {
+    background: var(--gradient-primary);
+    border-color: var(--primary-color);
+    color: var(--text-white);
+    box-shadow: var(--shadow-md);
+}
+
+.progress-step.active .step-icon {
+    background: var(--gradient-primary);
+    border-color: var(--primary-color);
+    color: var(--text-white);
+    box-shadow: var(--shadow-hover);
+    transform: scale(1.1);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 0 10px rgba(229, 9, 20, 0);
+    }
+}
+
+.step-content {
+    text-align: center;
+}
+
+.step-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-secondary);
+}
+
+.progress-step.completed .step-label,
+.progress-step.active .step-label {
+    color: var(--primary-color);
+    font-weight: var(--font-weight-bold);
+}
+
+.progress-line {
+    flex: 1;
+    height: 3px;
+    background: var(--border-color);
+    margin: 0 -25px;
+    position: relative;
+    z-index: 1;
+}
+
+.progress-line.completed {
+    background: var(--gradient-primary);
+}
+
+/* Selected Movie Section */
+.selected-movie {
+    padding: var(--spacing-xl) 0;
+    background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+}
+
+.selected-movie-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xl);
+    background: var(--bg-card);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.movie-poster-small {
+    width: 120px;
+    height: 180px;
+    border-radius: var(--border-radius-sm);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+}
+
+.movie-poster-small img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.movie-info-small {
+    flex: 1;
+}
+
+.movie-title-small {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.movie-meta-small {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.meta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.meta-badge i {
+    color: var(--primary-color);
+}
+
+.change-movie {
+    flex-shrink: 0;
+}
+
+/* Main Content Layout */
+.showtime-main {
+    padding: var(--spacing-3xl) 0;
+    background: var(--bg-secondary);
+}
+
+.showtime-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: var(--spacing-2xl);
+    align-items: start;
+}
+
+/* Filter Section */
+.filter-section {
+    background: var(--bg-card);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-xl);
+}
+
+.filter-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.filter-title i {
+    color: var(--primary-color);
+}
+
+.filter-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md);
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.filter-group label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-group label i {
+    color: var(--primary-color);
+}
+
+.filter-select {
+    padding: 14px 18px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    font-family: var(--font-family);
+    transition: all var(--transition-base);
+    cursor: pointer;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.1);
+}
+
+/* Date Tabs Section */
+.date-tabs-section {
+    background: var(--bg-card);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: var(--spacing-xl);
+}
+
+.section-subtitle {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.date-tabs {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    -webkit-overflow-scrolling: touch;
+}
+
+.date-tab {
+    flex: 1;
+    min-width: 100px;
+    padding: 16px 12px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-family);
+}
+
+.date-tab:hover {
+    border-color: var(--primary-color);
+    background: rgba(229, 9, 20, 0.05);
+}
+
+.date-tab.active {
+    background: var(--gradient-primary);
+    border-color: var(--primary-color);
+    color: var(--text-white);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+}
+
+.date-label {
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.date-value {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-bold);
+}
+
+.date-tab.active .date-label,
+.date-tab.active .date-value {
+    color: var(--text-white);
+}
+
+/* Showtimes List */
+.showtimes-section {
+    background: var(--bg-card);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.showtimes-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+}
+
+.theater-showtime-card {
+    padding: var(--spacing-xl);
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius);
+    border: 2px solid var(--border-color);
+    transition: all var(--transition-base);
+}
+
+.theater-showtime-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.theater-header-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-lg);
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.theater-info-card {
+    flex: 1;
+}
+
+.theater-name-card {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.theater-name-card i {
+    color: var(--primary-color);
+}
+
+.theater-address-card {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.theater-address-card i {
+    color: var(--primary-color);
+    font-size: 14px;
+}
+
+.theater-distance {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    padding: 8px 14px;
+    background: var(--bg-card);
+    border-radius: var(--border-radius-sm);
+}
+
+.theater-distance i {
+    color: var(--primary-color);
+}
+
+.showtime-formats-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-lg);
+}
+
+.format-group-card {
+    padding: var(--spacing-md);
+    background: var(--bg-card);
+    border-radius: var(--border-radius-sm);
+    border: 1px solid var(--border-color);
+}
+
+.format-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.format-name {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.format-price {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.time-slots-card {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+.time-slot-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 12px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-family: var(--font-family);
+    position: relative;
+    overflow: hidden;
+}
+
+.time-slot-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: var(--gradient-primary);
+    transition: left var(--transition-base);
+    z-index: 0;
+}
+
+.time-slot-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.time-slot-card:hover::before {
+    left: 0;
+}
+
+.time-slot-card .time-value,
+.time-slot-card .price-value {
+    position: relative;
+    z-index: 1;
+    transition: color var(--transition-base);
+}
+
+.time-slot-card:hover .time-value,
+.time-slot-card:hover .price-value {
+    color: var(--text-white);
+}
+
+.time-slot-card.available {
+    border-color: var(--primary-color);
+}
+
+.time-slot-card.selected {
+    background: var(--gradient-primary);
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-md);
+}
+
+.time-slot-card.selected::before {
+    left: 0;
+}
+
+.time-slot-card.selected .time-value,
+.time-slot-card.selected .price-value {
+    color: var(--text-white);
+}
+
+.time-value {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+.price-value {
+    font-size: var(--font-size-sm);
+    color: var(--primary-color);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Sidebar */
+.showtime-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xl);
+    position: sticky;
+    top: 90px;
+}
+
+/* Booking Summary Card */
+.booking-summary-card {
+    background: var(--bg-card);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.summary-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 3px solid var(--primary-color);
+}
+
+.summary-title i {
+    color: var(--primary-color);
+}
+
+.summary-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+}
+
+.summary-label {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+.summary-value {
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    font-weight: var(--font-weight-semibold);
+    text-align: right;
+    flex: 1;
+}
+
+.summary-item.total {
+    padding-top: var(--spacing-md);
+    border-top: 2px solid var(--border-color);
+}
+
+.summary-item.total .summary-label {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+.summary-item.total .summary-value {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--primary-color);
+}
+
+.summary-divider {
+    height: 1px;
+    background: var(--border-color);
+    margin: var(--spacing-sm) 0;
+}
+
+/* Cinema Info Card */
+.cinema-info-card {
+    background: var(--bg-card);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+}
+
+.info-title {
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-lg);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: var(--spacing-md);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.info-title i {
+    color: var(--primary-color);
+}
+
+.cinema-details {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.cinema-name-info {
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-primary);
+}
+
+.cinema-address-info {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    line-height: 1.6;
+}
+
+.cinema-features h5 {
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.feature-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    padding: 6px 0;
+}
+
+.feature-item i {
+    color: var(--primary-color);
+    width: 18px;
+}
+
+.cinema-map {
+    margin-top: var(--spacing-md);
+}
+
+.map-placeholder {
+    height: 200px;
+    background: var(--bg-secondary);
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: var(--text-secondary);
+    border: 2px dashed var(--border-color);
+}
+
+.map-placeholder i {
+    font-size: 48px;
+    color: var(--primary-color);
+    opacity: 0.5;
+}
+
+.map-placeholder p {
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+/* Navigation Buttons */
+.navigation-buttons {
+    padding: var(--spacing-2xl) 0;
+    background: var(--bg-card);
+    border-top: 1px solid var(--border-color);
+    position: sticky;
+    bottom: 0;
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nav-buttons-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--spacing-md);
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.btn-nav {
+    flex: 1;
+    max-width: 300px;
+    padding: 16px 32px;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-semibold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-nav:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .showtime-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .showtime-sidebar {
+        position: relative;
+        top: 0;
+    }
+    
+    .filter-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .progress-steps {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    
+    .progress-step {
+        flex: 0 0 calc(50% - 4px);
+    }
+    
+    .progress-line {
+        display: none;
+    }
+    
+    .selected-movie-card {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .movie-meta-small {
+        justify-content: center;
+    }
+    
+    .date-tabs {
+        gap: 8px;
+    }
+    
+    .date-tab {
+        min-width: 80px;
+        padding: 12px 8px;
+    }
+    
+    .time-slots-card {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+    
+    .nav-buttons-wrapper {
+        flex-direction: column;
+    }
+    
+    .btn-nav {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .step-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .step-label {
+        font-size: 11px;
+    }
+    
+    .movie-poster-small {
+        width: 100px;
+        height: 150px;
+    }
+    
+    .movie-title-small {
+        font-size: var(--font-size-xl);
+    }
+    
+    .time-slot-card {
+        padding: 12px 8px;
+    }
+    
+    .time-value {
+        font-size: var(--font-size-base);
+    }
+}

@@ -1,0 +1,178 @@
+/* Banner/Slider - Cinema Hero Style */
+.banner-slider {
+    margin-top: 70px;
+    position: relative;
+    height: 650px;
+    overflow: hidden;
+    border-radius: 0 0 var(--border-radius-xl) var(--border-radius-xl);
+    box-shadow: var(--shadow-xl);
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.slide {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.slide.active {
+    display: block;
+    animation: fadeIn 1s ease-in-out;
+}
+
+.slide-image {
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.slide-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+.slide-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-overlay);
+    z-index: 1;
+}
+
+.slide-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 80px 0;
+    z-index: 2;
+}
+
+.movie-info {
+    max-width: 700px;
+    animation: fadeInUp 0.8s ease-out 0.3s both;
+}
+
+.movie-title {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-weight-extrabold);
+    margin-bottom: 20px;
+    color: var(--text-white);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+}
+
+.movie-meta {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 20px;
+    font-size: var(--font-size-lg);
+    color: rgba(255, 255, 255, 0.95);
+    flex-wrap: wrap;
+}
+
+.movie-meta i {
+    margin-right: 8px;
+    color: var(--accent-color);
+}
+
+.movie-description {
+    font-size: var(--font-size-lg);
+    margin-bottom: 32px;
+    color: rgba(255, 255, 255, 0.95);
+    line-height: 1.8;
+    max-width: 600px;
+}
+
+.movie-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--glass-bg);
+    backdrop-filter: var(--backdrop-blur);
+    -webkit-backdrop-filter: var(--backdrop-blur);
+    border: 2px solid var(--glass-border);
+    color: var(--text-white);
+    font-size: 24px;
+    padding: 16px 20px;
+    cursor: pointer;
+    z-index: 3;
+    transition: all var(--transition-base);
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-lg);
+}
+
+.slider-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: var(--shadow-xl);
+}
+
+.slider-btn.prev {
+    left: 32px;
+}
+
+.slider-btn.next {
+    right: 32px;
+}
+
+.slider-indicators {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 12px;
+    z-index: 3;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    border: 2px solid transparent;
+}
+
+.indicator:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.2);
+}
+
+.indicator.active {
+    background-color: var(--text-white);
+    width: 36px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}

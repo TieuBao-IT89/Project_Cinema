@@ -1,0 +1,642 @@
+﻿<!-- Page Title Banner -->
+<section class="page-banner">
+    <div class="page-banner-overlay"></div>
+    <div class="page-banner-content">
+        <div class="container">
+            <h1 class="page-title">Danh sách phim</h1>
+            <p class="page-subtitle">Khám phá bộ sưu tập phim đa dạng và phong phú</p>
+        </div>
+    </div>
+</section>
+
+<!-- Filter and Search Section -->
+<section class="filter-section">
+    <div class="container">
+        <div class="filter-wrapper">
+            <!-- Search Bar -->
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="movie-search" placeholder="Tìm kiếm phim theo tên...">
+                <button type="button" class="btn-search" onclick="searchMovies()">
+                    <i class="fas fa-search"></i> Tìm kiếm
+                </button>
+            </div>
+
+            <!-- Filter Options -->
+            <div class="filter-options">
+                <div class="filter-group">
+                    <label for="genre-filter">Thể loại</label>
+                    <select id="genre-filter" class="filter-select" onchange="filterMovies()">
+                        <option value="">Tất cả</option>
+                        <option value="action">Hành động</option>
+                        <option value="comedy">Hài</option>
+                        <option value="drama">Tâm lý</option>
+                        <option value="horror">Kinh dị</option>
+                        <option value="sci-fi">Khoa học viễn tưởng</option>
+                        <option value="romance">Lãng mạn</option>
+                        <option value="thriller">Giật gân</option>
+                        <option value="animation">Hoạt hình</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="country-filter">Quốc gia</label>
+                    <select id="country-filter" class="filter-select" onchange="filterMovies()">
+                        <option value="">Tất cả</option>
+                        <option value="vn">Việt Nam</option>
+                        <option value="us">Mỹ</option>
+                        <option value="kr">Hàn Quốc</option>
+                        <option value="jp">Nhật Bản</option>
+                        <option value="cn">Trung Quốc</option>
+                        <option value="uk">Anh</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="age-filter">Độ tuổi</label>
+                    <select id="age-filter" class="filter-select" onchange="filterMovies()">
+                        <option value="">Tất cả</option>
+                        <option value="P">P - Phổ biến</option>
+                        <option value="C13">C13 - Trên 13 tuổi</option>
+                        <option value="C16">C16 - Trên 16 tuổi</option>
+                        <option value="C18">C18 - Trên 18 tuổi</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="format-filter">Định dạng</label>
+                    <select id="format-filter" class="filter-select" onchange="filterMovies()">
+                        <option value="">Tất cả</option>
+                        <option value="2d">2D</option>
+                        <option value="3d">3D</option>
+                        <option value="imax">IMAX</option>
+                        <option value="4dx">4DX</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="status-filter">Trạng thái</label>
+                    <select id="status-filter" class="filter-select" onchange="filterMovies()">
+                        <option value="">Tất cả</option>
+                        <option value="now-showing">Đang chiếu</option>
+                        <option value="coming-soon">Sắp chiếu</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <button type="button" class="btn-reset" onclick="resetFilters()">
+                        <i class="fas fa-redo"></i> Đặt lại
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Movies Tabs -->
+<section class="movies-tabs-section">
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('now-showing')">
+                <i class="fas fa-film"></i> Phim đang chiếu
+            </button>
+            <button class="tab-btn" onclick="switchTab('coming-soon')">
+                <i class="fas fa-calendar-alt"></i> Phim sắp chiếu
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Now Showing Movies -->
+<section id="now-showing" class="movies-list-section active-tab">
+    <div class="container">
+        <div class="movies-header">
+            <h2 class="section-title">Phim đang chiếu</h2>
+            <div class="movies-count">
+                <span id="now-showing-count">12</span> phim
+            </div>
+        </div>
+        <div class="movies-grid" id="now-showing-grid">
+            <!-- Movie cards will be populated here -->
+            <div class="movie-card" data-genre="action sci-fi" data-country="us" data-age="C13" data-format="2d 3d imax" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300" alt="Avengers: Endgame">
+                    <div class="movie-badges">
+                        <span class="badge badge-hot">HOT</span>
+                        <span class="badge badge-new">NEW</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Avengers: Endgame</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hành động, Khoa học viễn tưởng</span>
+                        <span class="duration">181 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D, IMAX</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="action" data-country="us" data-age="C13" data-format="2d 3d" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300" alt="Spider-Man">
+                    <div class="movie-badges">
+                        <span class="badge badge-hot">HOT</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Spider-Man: No Way Home</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hành động, Siêu anh hùng</span>
+                        <span class="duration">148 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="sci-fi" data-country="us" data-age="C13" data-format="2d 3d imax" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1535016120720-40c646be5580?w=300" alt="Dune">
+                    <div class="movie-badges">
+                        <span class="badge badge-new">NEW</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Dune</h3>
+                    <div class="movie-details">
+                        <span class="genre">Khoa học viễn tưởng, Phiêu lưu</span>
+                        <span class="duration">155 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D, IMAX</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="action sci-fi" data-country="us" data-age="C16" data-format="2d 3d" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300" alt="The Matrix">
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">The Matrix Resurrections</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hành động, Khoa học viễn tưởng</span>
+                        <span class="duration">148 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C16</span>
+                        <span class="format">2D, 3D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="action" data-country="uk" data-age="C16" data-format="2d 3d" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=300" alt="No Time to Die">
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">No Time to Die</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hành động, Giật gân</span>
+                        <span class="duration">163 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C16</span>
+                        <span class="format">2D, 3D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="sci-fi thriller" data-country="us" data-age="C13" data-format="2d 3d imax" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=300" alt="Inception">
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Inception</h3>
+                    <div class="movie-details">
+                        <span class="genre">Khoa học viễn tưởng, Giật gân</span>
+                        <span class="duration">148 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D, IMAX</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="comedy" data-country="vn" data-age="P" data-format="2d" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300" alt="Phim Việt Nam">
+                    <div class="movie-badges">
+                        <span class="badge badge-new">NEW</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Bố Già</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hài, Gia đình</span>
+                        <span class="duration">128 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">P</span>
+                        <span class="format">2D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="romance drama" data-country="kr" data-age="C13" data-format="2d" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300" alt="K-Drama">
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Parasite</h3>
+                    <div class="movie-details">
+                        <span class="genre">Tâm lý, Giật gân</span>
+                        <span class="duration">132 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="horror" data-country="jp" data-age="C18" data-format="2d" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1535016120720-40c646be5580?w=300" alt="Horror">
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">The Ring</h3>
+                    <div class="movie-details">
+                        <span class="genre">Kinh dị</span>
+                        <span class="duration">115 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C18</span>
+                        <span class="format">2D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="animation" data-country="us" data-age="P" data-format="2d 3d" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300" alt="Animation">
+                    <div class="movie-badges">
+                        <span class="badge badge-hot">HOT</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Toy Story 4</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hoạt hình, Gia đình</span>
+                        <span class="duration">100 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">P</span>
+                        <span class="format">2D, 3D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="action" data-country="us" data-age="C13" data-format="2d 3d imax" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=300" alt="Action">
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Fast & Furious 9</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hành động</span>
+                        <span class="duration">143 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D, IMAX</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="drama" data-country="us" data-age="C16" data-format="2d" data-status="now-showing">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=300" alt="Drama">
+                    <div class="movie-overlay">
+                        <a href="movie-details.html" class="btn btn-sm">Xem chi tiết</a>
+                        <a href="showtime.html" class="btn btn-sm btn-primary">Đặt vé</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">The Godfather</h3>
+                    <div class="movie-details">
+                        <span class="genre">Tâm lý, Tội phạm</span>
+                        <span class="duration">175 phút</span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C16</span>
+                        <span class="format">2D</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper">
+            <div class="pagination">
+                <button class="page-btn" onclick="changePage(-1)">
+                    <i class="fas fa-chevron-left"></i> Trước
+                </button>
+                <div class="page-numbers">
+                    <button class="page-number active" onclick="goToPage(1)">1</button>
+                    <button class="page-number" onclick="goToPage(2)">2</button>
+                    <button class="page-number" onclick="goToPage(3)">3</button>
+                </div>
+                <button class="page-btn" onclick="changePage(1)">
+                    Sau <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <button class="btn-load-more" onclick="loadMoreMovies()">
+                <i class="fas fa-plus"></i> Xem thêm
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Coming Soon Movies -->
+<section id="coming-soon" class="movies-list-section">
+    <div class="container">
+        <div class="movies-header">
+            <h2 class="section-title">Phim sắp chiếu</h2>
+            <div class="movies-count">
+                <span id="coming-soon-count">8</span> phim
+            </div>
+        </div>
+        <div class="movies-grid" id="coming-soon-grid">
+            <div class="movie-card" data-genre="action" data-country="us" data-age="C13" data-format="2d 3d imax" data-status="coming-soon">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?w=300" alt="Black Panther">
+                    <div class="movie-badges">
+                        <span class="badge badge-coming-soon">Sắp chiếu</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-detail.html" class="btn btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Black Panther: Wakanda Forever</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hành động, Siêu anh hùng</span>
+                        <span class="release-date">
+                            <i class="fas fa-calendar"></i> 11/11/2024
+                        </span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D, IMAX</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="sci-fi" data-country="us" data-age="C13" data-format="2d 3d imax 4dx" data-status="coming-soon">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300" alt="Avatar">
+                    <div class="movie-badges">
+                        <span class="badge badge-coming-soon">Sắp chiếu</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-detail.html" class="btn btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Avatar: The Way of Water</h3>
+                    <div class="movie-details">
+                        <span class="genre">Khoa học viễn tưởng, Phiêu lưu</span>
+                        <span class="release-date">
+                            <i class="fas fa-calendar"></i> 16/12/2024
+                        </span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D, IMAX, 4DX</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="action" data-country="us" data-age="C13" data-format="2d 3d" data-status="coming-soon">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300" alt="The Flash">
+                    <div class="movie-badges">
+                        <span class="badge badge-coming-soon">Sắp chiếu</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-detail.html" class="btn btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">The Flash</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hành động, Siêu anh hùng</span>
+                        <span class="release-date">
+                            <i class="fas fa-calendar"></i> 23/12/2024
+                        </span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="action" data-country="us" data-age="C13" data-format="2d 3d" data-status="coming-soon">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1535016120720-40c646be5580?w=300" alt="Guardians">
+                    <div class="movie-badges">
+                        <span class="badge badge-coming-soon">Sắp chiếu</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-detail.html" class="btn btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Guardians of the Galaxy Vol. 3</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hành động, Khoa học viễn tưởng</span>
+                        <span class="release-date">
+                            <i class="fas fa-calendar"></i> 05/01/2025
+                        </span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D, 3D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="comedy" data-country="vn" data-age="P" data-format="2d" data-status="coming-soon">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=300" alt="Phim VN">
+                    <div class="movie-badges">
+                        <span class="badge badge-coming-soon">Sắp chiếu</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-detail.html" class="btn btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Chị Mười Ba</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hài, Gia đình</span>
+                        <span class="release-date">
+                            <i class="fas fa-calendar"></i> 15/01/2025
+                        </span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">P</span>
+                        <span class="format">2D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="romance" data-country="kr" data-age="C13" data-format="2d" data-status="coming-soon">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=300" alt="K-Romance">
+                    <div class="movie-badges">
+                        <span class="badge badge-coming-soon">Sắp chiếu</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-detail.html" class="btn btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">My Sassy Girl 2</h3>
+                    <div class="movie-details">
+                        <span class="genre">Lãng mạn, Hài</span>
+                        <span class="release-date">
+                            <i class="fas fa-calendar"></i> 20/01/2025
+                        </span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C13</span>
+                        <span class="format">2D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="animation" data-country="jp" data-age="P" data-format="2d 3d" data-status="coming-soon">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1574267432553-4b4628081c31?w=300" alt="Anime">
+                    <div class="movie-badges">
+                        <span class="badge badge-coming-soon">Sắp chiếu</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-detail.html" class="btn btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">Your Name 2</h3>
+                    <div class="movie-details">
+                        <span class="genre">Hoạt hình, Lãng mạn</span>
+                        <span class="release-date">
+                            <i class="fas fa-calendar"></i> 25/01/2025
+                        </span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">P</span>
+                        <span class="format">2D, 3D</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="movie-card" data-genre="thriller" data-country="us" data-age="C18" data-format="2d" data-status="coming-soon">
+                <div class="movie-poster">
+                    <img src="https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=300" alt="Thriller">
+                    <div class="movie-badges">
+                        <span class="badge badge-coming-soon">Sắp chiếu</span>
+                    </div>
+                    <div class="movie-overlay">
+                        <a href="movie-detail.html" class="btn btn-sm">Xem chi tiết</a>
+                    </div>
+                </div>
+                <div class="movie-info">
+                    <h3 class="movie-name">The Silence of the Lambs 2</h3>
+                    <div class="movie-details">
+                        <span class="genre">Giật gân, Tâm lý</span>
+                        <span class="release-date">
+                            <i class="fas fa-calendar"></i> 30/01/2025
+                        </span>
+                    </div>
+                    <div class="movie-meta-info">
+                        <span class="age-rating">C18</span>
+                        <span class="format">2D</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-wrapper">
+            <div class="pagination">
+                <button class="page-btn" onclick="changePage(-1)">
+                    <i class="fas fa-chevron-left"></i> Trước
+                </button>
+                <div class="page-numbers">
+                    <button class="page-number active" onclick="goToPage(1)">1</button>
+                    <button class="page-number" onclick="goToPage(2)">2</button>
+                </div>
+                <button class="page-btn" onclick="changePage(1)">
+                    Sau <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            <button class="btn-load-more" onclick="loadMoreMovies()">
+                <i class="fas fa-plus"></i> Xem thêm
+            </button>
+        </div>
+    </div>
+</section>
