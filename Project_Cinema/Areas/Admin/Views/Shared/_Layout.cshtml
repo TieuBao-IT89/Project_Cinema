@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["AdminTitle"] - CinemaHub Admin</title>
+    <link rel="stylesheet" href="~/css/variables.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/base.css">
+    <link rel="stylesheet" href="~/css/admin-dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="admin-sidebar">
+        <div class="sidebar-header">
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="sidebar-logo">
+                <i class="fas fa-film"></i>
+                <span>CinemaHub</span>
+                <span class="admin-badge">ADMIN</span>
+            </a>
+        </div>
+
+        <nav class="sidebar-nav">
+            <ul class="nav-menu-list">
+                <li>
+                    <a asp-area="Admin" asp-controller="Dashboard" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Dashboard" ? "active" : "")">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Movies" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Movies" ? "active" : "")">
+                        <i class="fas fa-film"></i>
+                        <span>Quản lý phim</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Showtimes" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Showtimes" ? "active" : "")">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Lịch chiếu</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Cinemas" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Cinemas" ? "active" : "")">
+                        <i class="fas fa-building"></i>
+                        <span>Quản lý rạp</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Rooms" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Rooms" ? "active" : "")">
+                        <i class="fas fa-door-open"></i>
+                        <span>Quản lý phòng</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Seats" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Seats" ? "active" : "")">
+                        <i class="fas fa-chair"></i>
+                        <span>Sơ đồ ghế</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Promotions" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Promotions" ? "active" : "")">
+                        <i class="fas fa-gift"></i>
+                        <span>Khuyến mãi</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Reports" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Reports" ? "active" : "")">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Báo cáo</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Users" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Users" ? "active" : "")">
+                        <i class="fas fa-users"></i>
+                        <span>Người dùng</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Bookings" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Bookings" ? "active" : "")">
+                        <i class="fas fa-receipt"></i>
+                        <span>Đặt vé</span>
+                    </a>
+                </li>
+                <li>
+                    <a asp-area="Admin" asp-controller="Payments" asp-action="Index"
+                       class="nav-item @(ViewData["AdminActive"] as string == "Payments" ? "active" : "")">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Thanh toán</span>
+                    </a>
+                </li>
+                <li class="nav-divider"></li>
+                <li>
+                    <form asp-area="" asp-controller="Account" asp-action="Logout" method="post" class="nav-item nav-logout">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="nav-logout-button">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Đăng xuất</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="admin-main">
+        <header class="admin-header">
+            <div class="header-left">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1 class="page-title">@ViewData["AdminTitle"]</h1>
+            </div>
+            <div class="header-right">
+                <div class="header-notification">
+                    <button class="notification-btn" id="notificationBtn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
+                </div>
+                <div class="header-user">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <span class="user-name">@User.Identity?.Name</span>
+                        <span class="user-role">Quản trị viên</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        @RenderBody()
+    </div>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

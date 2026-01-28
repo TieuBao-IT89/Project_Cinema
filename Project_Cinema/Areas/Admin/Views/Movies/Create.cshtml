@@ -1,0 +1,102 @@
+@model Project_Cinema.Models.MovieModel
+
+@{
+    ViewData["AdminTitle"] = "Thêm phim";
+    var posterPreview = string.IsNullOrWhiteSpace(Model?.PosterUrl)
+        ? "https://via.placeholder.com/300x450?text=Poster"
+        : Model.PosterUrl;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-movies.css" />
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-film"></i> Thêm phim mới
+            </h2>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="table-card">
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-grid">
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Thông tin phim</h3>
+                            <p class="form-card-subtitle">Nhập đầy đủ thông tin để hiển thị trên website.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <label class="form-label">Tên phim</label>
+                                <input asp-for="Title" class="form-control" placeholder="Ví dụ: Lật Mặt 7" />
+                                <span class="text-danger" asp-validation-for="Title"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Thời lượng (phút)</label>
+                                <input asp-for="DurationMin" class="form-control" placeholder="120" />
+                                <span class="text-danger" asp-validation-for="DurationMin"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ngày khởi chiếu</label>
+                                <input asp-for="ReleaseDate" type="date" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ngôn ngữ</label>
+                                <input asp-for="Language" class="form-control" placeholder="Việt / Anh" />
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Độ tuổi</label>
+                                <input asp-for="AgeRating" class="form-control" placeholder="C13 / C16 / C18" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Poster URL</label>
+                                <input asp-for="PosterUrl" class="form-control" placeholder="https://..." />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Trailer URL</label>
+                                <input asp-for="TrailerUrl" class="form-control" placeholder="https://youtube.com/..." />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Mô tả</label>
+                                <textarea asp-for="Description" class="form-control" rows="4" placeholder="Tóm tắt nội dung phim..."></textarea>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Trạng thái</label>
+                                <select asp-for="Status" class="form-select">
+                                    <option value="now_showing">Đang chiếu</option>
+                                    <option value="coming_soon">Sắp chiếu</option>
+                                    <option value="ended">Kết thúc</option>
+                                </select>
+                                <span class="text-danger" asp-validation-for="Status"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section-card preview-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Xem trước</h3>
+                            <p class="form-card-subtitle">Hiển thị poster và thông tin nhanh.</p>
+                        </div>
+                        <img src="@posterPreview" alt="Poster preview" class="preview-image" />
+                        <div class="preview-meta">
+                            <span>Poster lấy từ đường dẫn bạn nhập.</span>
+                            <span>Trailer nên là link YouTube hợp lệ.</span>
+                        </div>
+                        <div class="form-help">
+                            Gợi ý: Poster tỉ lệ 2:3, dung lượng nhỏ để tải nhanh.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a asp-area="Admin" asp-controller="Movies" asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>

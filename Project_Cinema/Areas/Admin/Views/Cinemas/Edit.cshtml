@@ -1,0 +1,86 @@
+@model Project_Cinema.Models.CinemaModel
+
+@{
+    ViewData["AdminTitle"] = "Cập nhật rạp";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-cinemas.css" />
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-building"></i> Cập nhật rạp
+            </h2>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="table-card">
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="CinemaId" />
+                <div class="form-grid">
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Cập nhật thông tin rạp</h3>
+                            <p class="form-card-subtitle">Chỉnh sửa địa chỉ và liên hệ.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Tên rạp</label>
+                                <input asp-for="CinemaName" class="form-control" placeholder="Tên rạp" />
+                                <span class="text-danger" asp-validation-for="CinemaName"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Thành phố</label>
+                                <input asp-for="City" class="form-control" placeholder="Thành phố" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Địa chỉ</label>
+                                <input asp-for="Address" class="form-control" placeholder="Số nhà, đường, phường..." />
+                                <span class="text-danger" asp-validation-for="Address"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Thông tin bổ sung</h3>
+                            <p class="form-card-subtitle">Vị trí và trạng thái hoạt động.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Số điện thoại</label>
+                                <input asp-for="Phone" class="form-control" placeholder="0909 000 000" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Latitude</label>
+                                <input asp-for="Latitude" class="form-control" placeholder="10.7758" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Longitude</label>
+                                <input asp-for="Longitude" class="form-control" placeholder="106.7024" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Trạng thái</label>
+                                <select asp-for="Status" class="form-select">
+                                    <option value="active">Hoạt động</option>
+                                    <option value="inactive">Tạm dừng</option>
+                                </select>
+                                <span class="text-danger" asp-validation-for="Status"></span>
+                            </div>
+                        </div>
+                        <div class="form-help">Gợi ý: cập nhật tọa độ nếu đổi địa chỉ.</div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+                    <a asp-area="Admin" asp-controller="Cinemas" asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>

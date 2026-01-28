@@ -1,0 +1,39 @@
+@{
+    ViewData["AdminTitle"] = "Người dùng";
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-users"></i> Người dùng
+            </h2>
+            <p class="section-subtitle">Quản lý tài khoản người dùng</p>
+        </div>
+    </section>
+
+    <section class="table-section">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Danh sách người dùng</h3>
+            </div>
+            <div class="table-body">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Họ tên</th>
+                            <th>Email</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td colspan="4" class="empty-row">Dữ liệu sẽ được tải từ database.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>

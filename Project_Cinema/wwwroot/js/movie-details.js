@@ -86,10 +86,15 @@ function playTrailer() {
     const preview = document.getElementById('trailerPreview');
     const video = document.getElementById('trailerVideo');
     const iframe = document.getElementById('trailerIframe');
+    const trailerSection = document.querySelector('.trailer-section');
     
     if (preview && video && iframe) {
         // Set video source
-        iframe.src = 'https://www.youtube.com/embed/TcMBFSGVi1c?autoplay=1';
+        const dataUrl = trailerSection ? trailerSection.getAttribute('data-trailer-url') : '';
+        const trailerUrl = dataUrl && dataUrl.trim().length > 0
+            ? dataUrl
+            : 'https://www.youtube.com/embed/TcMBFSGVi1c?autoplay=1';
+        iframe.src = trailerUrl;
         
         // Hide preview and show video
         preview.style.display = 'none';

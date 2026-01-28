@@ -5,6 +5,23 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeDates();
     setMinDate();
     updateSummary();
+
+    const filterForm = document.getElementById('showtimeFilterForm');
+    const cinemaFilter = document.getElementById('cinema-filter');
+    const dateFilter = document.getElementById('date-filter');
+
+    if (filterForm) {
+        if (cinemaFilter) {
+            cinemaFilter.addEventListener('change', function () {
+                filterForm.submit();
+            });
+        }
+        if (dateFilter) {
+            dateFilter.addEventListener('change', function () {
+                filterForm.submit();
+            });
+        }
+    }
 });
 
 // Initialize date tabs
@@ -38,9 +55,9 @@ function initializeDates() {
         }
     }
     
-    // Set date filter to today
+    // Set date filter to today if empty
     const dateFilter = document.getElementById('date-filter');
-    if (dateFilter) {
+    if (dateFilter && !dateFilter.value) {
         dateFilter.value = formatDateInput(dates[0]);
     }
 }
@@ -115,7 +132,12 @@ function selectDate(dateType) {
     // Update summary
     updateSummaryDate(selectedDate);
     
-    // Filter showtimes
+    // Filter showtimes or submit filter form
+    const filterForm = document.getElementById('showtimeFilterForm');
+    if (filterForm) {
+        filterForm.submit();
+        return;
+    }
     filterShowtimes();
 }
 
@@ -151,9 +173,9 @@ function selectShowtime(element) {
 
 // Update summary
 function updateSummary() {
-    // Movie is already set
+    // Movie is already set by server
     const summaryMovie = document.getElementById('summary-movie');
-    if (summaryMovie) {
+    if (summaryMovie && !summaryMovie.textContent.trim()) {
         summaryMovie.textContent = 'Avengers: Endgame';
     }
     
@@ -244,21 +266,27 @@ function continueToSeats() {
         alert('Vui lòng chọn suất chiếu!');
         return;
     }
+
+    const showtimeId = selectedSlot.dataset.showtimeId;
+    if (!showtimeId) {
+        alert('Không tìm thấy suất chiếu hợp lệ!');
+        return;
+    }
     
     // Get all booking data
     const bookingData = {
-        movie: 'Avengers: Endgame',
+        movie: document.getElementById('summary-movie').textContent,
         cinema: document.getElementById('summary-cinema').textContent,
         date: document.getElementById('summary-date').textContent,
         time: document.getElementById('summary-time').textContent,
         format: document.getElementById('summary-format').textContent,
-        price: document.getElementById('summary-price').textContent
+        price: document.getElementById('summary-price').textContent,
+        showtimeId
     };
     
     // Store in sessionStorage
     sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
     
-    // Redirect to seats page (if exists)
-    // window.location.href = 'seats.html';
-    alert('Chuyển đến trang chọn ghế...\n\n' + JSON.stringify(bookingData, null, 2));
+    // Redirect to seats page
+    window.location.href = `/Seat/Index?showtimeId=${showtimeId}`;
 }

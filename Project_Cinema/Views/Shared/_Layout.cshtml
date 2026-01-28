@@ -20,8 +20,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    @await RenderSectionAsync("Styles", required: false)
 </head>
-<body>
+<body class="@ViewData["BodyClass"]">
     <!-- Header -->
     <header class="header">
         <div class="container">
@@ -47,8 +48,19 @@
 
                 <!-- Account Area -->
                 <div class="account-area">
-                    <a href="login.html" class="btn-login">Đăng nhập</a>
-                    <a href="register.html" class="btn-register"><span>Đăng ký</span></a>
+                    @if (User.Identity != null && User.Identity.IsAuthenticated)
+                    {
+                        <span class="btn-login">Xin chào, @User.Identity.Name</span>
+                        <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-register"><span>Đăng xuất</span></button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-controller="Account" asp-action="Login" class="btn-login">Đăng nhập</a>
+                        <a asp-controller="Account" asp-action="Register" class="btn-register"><span>Đăng ký</span></a>
+                    }
                 </div>
             </div>
         </div>
@@ -128,7 +140,6 @@
 
 
     <!-- JS -->
-    <script src="~/js/login.js"></script>
     <script src="~/js/main.js"></script>
     <script src="~/js/cinema.js"></script>
     <script src="~/js/movies.js"></script>

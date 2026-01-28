@@ -1,0 +1,77 @@
+@model Project_Cinema.ViewModels.AdminShowtimeIndexViewModel
+
+@{
+    ViewData["AdminTitle"] = "Lịch chiếu";
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i> Lịch chiếu
+            </h2>
+            <p class="section-subtitle">Quản lý lịch chiếu theo phim và phòng chiếu</p>
+        </div>
+        <div class="page-header-right">
+            <a asp-area="Admin" asp-controller="Showtimes" asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm lịch chiếu
+            </a>
+        </div>
+    </section>
+
+    <section class="table-section">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Danh sách lịch chiếu</h3>
+            </div>
+            <div class="table-body">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Phim</th>
+                            <th>Rạp</th>
+                            <th>Phòng</th>
+                            <th>Thời gian</th>
+                            <th>Giá</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Items.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="empty-row">Chưa có lịch chiếu.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var item in Model.Items)
+                            {
+                                <tr>
+                                    <td>@item.MovieTitle</td>
+                                    <td>@item.CinemaName</td>
+                                    <td>@item.RoomName (@item.RoomType)</td>
+                                    <td>@item.StartsAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>@item.BasePrice.ToString("N0")đ</td>
+                                    <td>
+                                        <a asp-area="Admin" asp-controller="Showtimes" asp-action="Edit" asp-route-id="@item.ShowtimeId"
+                                           class="btn btn-secondary btn-sm">
+                                            Sửa
+                                        </a>
+                                        <form asp-area="Admin" asp-controller="Showtimes" asp-action="Delete" asp-route-id="@item.ShowtimeId"
+                                              method="post" style="display:inline-block">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xóa lịch chiếu này?');">
+                                                Xóa
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>

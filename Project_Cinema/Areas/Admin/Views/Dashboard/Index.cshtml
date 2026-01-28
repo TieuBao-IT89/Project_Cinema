@@ -1,0 +1,117 @@
+@{
+    ViewData["AdminTitle"] = "Dashboard";
+}
+
+<main class="dashboard-content">
+    <!-- Statistics Cards -->
+    <section class="stats-section">
+        <div class="stats-grid">
+            <div class="stat-card movies">
+                <div class="stat-icon">
+                    <i class="fas fa-film"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Tổng số phim</h3>
+                    <p class="stat-value" id="totalMovies">0</p>
+                    <span class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> +12 tháng này
+                    </span>
+                </div>
+            </div>
+
+            <div class="stat-card tickets">
+                <div class="stat-icon">
+                    <i class="fas fa-ticket-alt"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Vé đã bán</h3>
+                    <p class="stat-value" id="totalTickets">0</p>
+                    <span class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> +8.5% tháng này
+                    </span>
+                </div>
+            </div>
+
+            <div class="stat-card revenue">
+                <div class="stat-icon">
+                    <i class="fas fa-dollar-sign"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Doanh thu</h3>
+                    <p class="stat-value" id="totalRevenue">0 đ</p>
+                    <span class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> +15.2% tháng này
+                    </span>
+                </div>
+            </div>
+
+            <div class="stat-card users">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <h3 class="stat-label">Người dùng</h3>
+                    <p class="stat-value" id="totalUsers">0</p>
+                    <span class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> +234 tháng này
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="charts-section">
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <h3 class="chart-title">
+                        <i class="fas fa-chart-area"></i> Biểu đồ vé bán theo ngày
+                    </h3>
+                    <select class="chart-filter" id="chartPeriod">
+                        <option value="7days">7 ngày qua</option>
+                        <option value="30days" selected>30 ngày qua</option>
+                        <option value="90days">90 ngày qua</option>
+                    </select>
+                </div>
+                <div class="chart-body">
+                    <canvas id="ticketsChart" class="chart-canvas"></canvas>
+                    <div class="chart-placeholder" id="chartPlaceholder">
+                        <i class="fas fa-chart-line"></i>
+                        <p>Biểu đồ sẽ được tích hợp tại đây</p>
+                        <p class="chart-note">Sử dụng Chart.js, ApexCharts hoặc thư viện biểu đồ khác</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="top-movies-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-fire"></i> Phim bán chạy
+                    </h3>
+                    <a href="#" class="card-link">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="card-body">
+                    <div class="top-movies-list" id="topMoviesList"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="activities-section">
+        <div class="activities-card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    <i class="fas fa-clock"></i> Đơn đặt vé mới nhất
+                </h3>
+                <a href="#" class="card-link">Xem tất cả <i class="fas fa-arrow-right"></i></a>
+            </div>
+            <div class="card-body">
+                <div class="activities-list" id="activitiesList"></div>
+            </div>
+        </div>
+    </section>
+</main>
+
+@section Scripts {
+    <script src="~/js/admin-dashboard.js"></script>
+}

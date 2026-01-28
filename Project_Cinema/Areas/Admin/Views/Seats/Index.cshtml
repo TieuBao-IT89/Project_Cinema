@@ -1,0 +1,77 @@
+@model Project_Cinema.ViewModels.SeatIndexViewModel
+
+@{
+    ViewData["AdminTitle"] = "Sơ đồ ghế";
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-chair"></i> Sơ đồ ghế
+            </h2>
+            <p class="section-subtitle">Quản lý ghế theo phòng chiếu</p>
+        </div>
+        <div class="page-header-right">
+            <a asp-area="Admin" asp-controller="Seats" asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm ghế
+            </a>
+        </div>
+    </section>
+
+    <section class="table-section">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Danh sách ghế</h3>
+            </div>
+            <div class="table-body">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Rạp</th>
+                            <th>Phòng</th>
+                            <th>Hàng</th>
+                            <th>Số ghế</th>
+                            <th>Loại</th>
+                            <th>Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Items.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="empty-row">Chưa có dữ liệu ghế.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var seat in Model.Items)
+                            {
+                                <tr>
+                                    <td>@seat.CinemaName</td>
+                                    <td>@seat.RoomName</td>
+                                    <td>@seat.SeatRow</td>
+                                    <td>@seat.SeatNumber</td>
+                                    <td>@seat.SeatType</td>
+                                    <td>
+                                        <a asp-area="Admin" asp-controller="Seats" asp-action="Edit" asp-route-id="@seat.SeatId"
+                                           class="btn btn-secondary btn-sm">
+                                            Sửa
+                                        </a>
+                                        <form asp-area="Admin" asp-controller="Seats" asp-action="Delete" asp-route-id="@seat.SeatId"
+                                              method="post" style="display:inline-block">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xóa ghế này?');">
+                                                Xóa
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>

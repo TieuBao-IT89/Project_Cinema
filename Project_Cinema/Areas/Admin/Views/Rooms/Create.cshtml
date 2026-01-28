@@ -1,0 +1,71 @@
+@model Project_Cinema.ViewModels.RoomFormViewModel
+
+@{
+    ViewData["AdminTitle"] = "Thêm phòng";
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-door-open"></i> Thêm phòng
+            </h2>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="table-card">
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-grid">
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Thông tin phòng</h3>
+                            <p class="form-card-subtitle">Thiết lập phòng chiếu cho từng rạp.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Rạp</label>
+                                <select asp-for="Room.CinemaId" class="form-select">
+                                    @foreach (var cinema in Model.Cinemas)
+                                    {
+                                        <option value="@cinema.CinemaId">@cinema.CinemaName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Tên phòng</label>
+                                <input asp-for="Room.RoomName" class="form-control" placeholder="Phòng 1 / Room A" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Thiết lập</h3>
+                            <p class="form-card-subtitle">Định dạng và trạng thái phòng.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Định dạng</label>
+                                <input asp-for="Room.RoomType" class="form-control" placeholder="2D / 3D / IMAX" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Trạng thái</label>
+                                <select asp-for="Room.Status" class="form-select">
+                                    <option value="active">Hoạt động</option>
+                                    <option value="inactive">Tạm dừng</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-help">Gợi ý: đặt định dạng để lọc suất chiếu.</div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a asp-area="Admin" asp-controller="Rooms" asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>

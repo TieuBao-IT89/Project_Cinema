@@ -1,0 +1,91 @@
+@model IEnumerable<Project_Cinema.Models.MovieModel>
+
+@{
+    ViewData["AdminTitle"] = "Quản lý phim";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-movies.css" />
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-film"></i> Quản lý phim
+            </h2>
+            <p class="section-subtitle">Quản lý danh sách phim và thông tin chi tiết</p>
+        </div>
+        <div class="page-header-right">
+            <a asp-area="Admin" asp-controller="Movies" asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm phim mới
+            </a>
+        </div>
+    </section>
+
+    <section class="table-section">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Danh sách phim</h3>
+                <div class="table-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm phim...">
+                    </div>
+                </div>
+            </div>
+            <div class="table-body">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Poster</th>
+                            <th>Tên phim</th>
+                            <th>Thời lượng</th>
+                            <th>Ngày khởi chiếu</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="moviesTableBody">
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="empty-row">Chưa có dữ liệu phim.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var movie in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        <img src="@(string.IsNullOrWhiteSpace(movie.PosterUrl) ? "https://via.placeholder.com/60x90" : movie.PosterUrl)"
+                                             alt="@movie.Title" style="width:60px;height:90px;object-fit:cover;border-radius:8px;" />
+                                    </td>
+                                    <td>@movie.Title</td>
+                                    <td>@movie.DurationMin phút</td>
+                                    <td>@(movie.ReleaseDate?.ToString("dd/MM/yyyy") ?? "--")</td>
+                                    <td>@movie.Status</td>
+                                    <td>
+                                        <a asp-area="Admin" asp-controller="Movies" asp-action="Edit" asp-route-id="@movie.MovieId"
+                                           class="btn btn-secondary btn-sm">
+                                            Sửa
+                                        </a>
+                                        <form asp-area="Admin" asp-controller="Movies" asp-action="Delete" asp-route-id="@movie.MovieId"
+                                              method="post" style="display:inline-block">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xóa phim này?');">
+                                                Xóa
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+

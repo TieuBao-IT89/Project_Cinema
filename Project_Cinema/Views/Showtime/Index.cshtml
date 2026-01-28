@@ -1,5 +1,302 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model Project_Cinema.ViewModels.ShowtimeIndexViewModel
+
 @{
+    ViewData["Title"] = "Chọn lịch chiếu";
+    var selectedDate = Model.SelectedDate?.ToString("yyyy-MM-dd") ?? DateTime.Today.ToString("yyyy-MM-dd");
+    var selectedDateText = Model.SelectedDate?.ToString("dd/MM/yyyy") ?? DateTime.Today.ToString("dd/MM/yyyy");
+    var posterUrl = string.IsNullOrWhiteSpace(Model.Movie?.PosterUrl)
+        ? "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400"
+        : Model.Movie!.PosterUrl;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/showtime.css" />
+}
+
+<!-- Booking Progress Bar -->
+<section class="booking-progress">
+    <div class="container">
+        <div class="progress-steps">
+            <div class="progress-step completed">
+                <div class="step-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <div class="step-content">
+                    <span class="step-label">Chọn phim</span>
+                </div>
+            </div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step active">
+                <div class="step-icon">
+                    <i class="fas fa-calendar-alt"></i>
+                </div>
+                <div class="step-content">
+                    <span class="step-label">Chọn lịch chiếu</span>
+                </div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step">
+                <div class="step-icon">
+                    <i class="fas fa-chair"></i>
+                </div>
+                <div class="step-content">
+                    <span class="step-label">Chọn ghế</span>
+                </div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step">
+                <div class="step-icon">
+                    <i class="fas fa-credit-card"></i>
+                </div>
+                <div class="step-content">
+                    <span class="step-label">Thanh toán</span>
+                </div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step">
+                <div class="step-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <div class="step-content">
+                    <span class="step-label">Xác nhận</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Selected Movie Section -->
+<section class="selected-movie">
+    <div class="container">
+        <div class="selected-movie-card">
+            <div class="movie-poster-small">
+                <img src="@posterUrl" alt="@Model.Movie?.Title">
+            </div>
+            <div class="movie-info-small">
+                <h2 class="movie-title-small">@Model.Movie?.Title</h2>
+                <div class="movie-meta-small">
+                    <span class="meta-badge">
+                        <i class="fas fa-clock"></i> @Model.Movie?.DurationMin phút
+                    </span>
+                    <span class="meta-badge">
+                        <i class="fas fa-user-friends"></i> @Model.Movie?.AgeRating
+                    </span>
+                </div>
+            </div>
+            <div class="change-movie">
+                <a asp-controller="Movie" asp-action="Details" asp-route-id="@Model.Movie?.MovieId" class="btn btn-secondary">
+                    <i class="fas fa-edit"></i> Đổi phim
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="showtime-main">
+    <div class="container">
+        <div class="showtime-layout">
+            <!-- Left Column: Filters & Showtimes -->
+            <div class="showtime-content">
+                <div class="filter-section">
+                    <h3 class="filter-title">
+                        <i class="fas fa-filter"></i> Lọc theo
+                    </h3>
+                    <form id="showtimeFilterForm" method="get" class="filter-grid">
+                        <input type="hidden" name="movieId" value="@Model.Movie?.MovieId" />
+                        <div class="filter-group">
+                            <label for="cinema-filter">
+                                <i class="fas fa-building"></i> Chọn rạp
+                            </label>
+                            <select id="cinema-filter" name="cinemaId" class="filter-select">
+                                <option value="">Tất cả rạp</option>
+                                @foreach (var cinema in Model.Cinemas)
+                                {
+                                    <option value="@cinema.CinemaId" selected="@(Model.SelectedCinemaId == cinema.CinemaId)">
+                                        @cinema.CinemaName
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="date-filter">
+                                <i class="fas fa-calendar"></i> Chọn ngày
+                            </label>
+                            <input type="date" id="date-filter" name="date" class="filter-select" value="@selectedDate">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="date-tabs-section">
+                    <h3 class="section-subtitle">Chọn ngày chiếu</h3>
+                    <div class="date-tabs">
+                        <button class="date-tab active" data-date="today" onclick="selectDate('today')">
+                            <span class="date-label">Hôm nay</span>
+                            <span class="date-value" id="date-today"></span>
+                        </button>
+                        <button class="date-tab" data-date="tomorrow" onclick="selectDate('tomorrow')">
+                            <span class="date-label">Ngày mai</span>
+                            <span class="date-value" id="date-tomorrow"></span>
+                        </button>
+                        <button class="date-tab" data-date="day3" onclick="selectDate('day3')">
+                            <span class="date-value" id="date-day3"></span>
+                        </button>
+                        <button class="date-tab" data-date="day4" onclick="selectDate('day4')">
+                            <span class="date-value" id="date-day4"></span>
+                        </button>
+                        <button class="date-tab" data-date="day5" onclick="selectDate('day5')">
+                            <span class="date-value" id="date-day5"></span>
+                        </button>
+                        <button class="date-tab" data-date="day6" onclick="selectDate('day6')">
+                            <span class="date-value" id="date-day6"></span>
+                        </button>
+                        <button class="date-tab" data-date="day7" onclick="selectDate('day7')">
+                            <span class="date-value" id="date-day7"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="showtimes-section">
+                    <h3 class="section-subtitle">Chọn suất chiếu</h3>
+                    <div class="showtimes-list" id="showtimesList">
+                        @if (Model.Cinemas.Count == 0)
+                        {
+                            <div class="empty-state">
+                                <p>Chưa có lịch chiếu cho ngày đã chọn.</p>
+                            </div>
+                        }
+                        else
+                        {
+                            @foreach (var cinema in Model.Cinemas)
+                            {
+                                <div class="theater-showtime-card" data-cinema="@cinema.CinemaId">
+                                    <div class="theater-header-card">
+                                        <div class="theater-info-card">
+                                            <h4 class="theater-name-card">
+                                                <i class="fas fa-building"></i> @cinema.CinemaName
+                                            </h4>
+                                            <p class="theater-address-card">
+                                                <i class="fas fa-map-marker-alt"></i> @cinema.Address
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="showtime-formats-card">
+                                        @foreach (var room in cinema.Rooms)
+                                        {
+                                            <div class="format-group-card">
+                                                <div class="format-header">
+                                                    <span class="format-name">@room.RoomType</span>
+                                                    <span class="format-price">Từ @room.Showtimes.Min(slot => slot.BasePrice).ToString("N0")đ</span>
+                                                </div>
+                                                <div class="time-slots-card">
+                                                    @foreach (var slot in room.Showtimes)
+                                                    {
+                                                        <button class="time-slot-card available"
+                                                                data-showtime-id="@slot.ShowtimeId"
+                                                                data-time="@slot.StartsAt.ToString("HH:mm")"
+                                                                data-price="@slot.BasePrice"
+                                                                onclick="selectShowtime(this)">
+                                                            <span class="time-value">@slot.StartsAt.ToString("HH:mm")</span>
+                                                            <span class="price-value">@slot.BasePrice.ToString("N0")đ</span>
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Summary & Cinema Info -->
+            <div class="showtime-sidebar">
+                <div class="booking-summary-card">
+                    <h3 class="summary-title">
+                        <i class="fas fa-receipt"></i> Tóm tắt đặt vé
+                    </h3>
+                    <div class="summary-content">
+                        <div class="summary-item">
+                            <span class="summary-label">Phim:</span>
+                            <span class="summary-value" id="summary-movie">@Model.Movie?.Title</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Rạp:</span>
+                            <span class="summary-value" id="summary-cinema">--</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Ngày:</span>
+                            <span class="summary-value" id="summary-date">@selectedDateText</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Suất chiếu:</span>
+                            <span class="summary-value" id="summary-time">--</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Định dạng:</span>
+                            <span class="summary-value" id="summary-format">--</span>
+                        </div>
+                        <div class="summary-divider"></div>
+                        <div class="summary-item total">
+                            <span class="summary-label">Giá vé:</span>
+                            <span class="summary-value" id="summary-price">--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cinema-info-card" id="cinemaInfoCard" style="display: none;">
+                    <h3 class="info-title">
+                        <i class="fas fa-info-circle"></i> Thông tin rạp
+                    </h3>
+                    <div class="cinema-details">
+                        <h4 class="cinema-name-info" id="cinemaNameInfo">--</h4>
+                        <p class="cinema-address-info" id="cinemaAddressInfo">--</p>
+                        <div class="cinema-features">
+                            <h5>Tiện ích:</h5>
+                            <div class="features-list">
+                                <span class="feature-item">
+                                    <i class="fas fa-wifi"></i> WiFi miễn phí
+                                </span>
+                                <span class="feature-item">
+                                    <i class="fas fa-car"></i> Bãi đỗ xe
+                                </span>
+                                <span class="feature-item">
+                                    <i class="fas fa-utensils"></i> Quầy thức ăn
+                                </span>
+                                <span class="feature-item">
+                                    <i class="fas fa-wheelchair"></i> Thân thiện người khuyết tật
+                                </span>
+                            </div>
+                        </div>
+                        <div class="cinema-map">
+                            <div class="map-placeholder">
+                                <i class="fas fa-map-marked-alt"></i>
+                                <p>Bản đồ rạp chiếu</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="navigation-buttons">
+    <div class="container">
+        <div class="nav-buttons-wrapper">
+            <a asp-controller="Movie" asp-action="Details" asp-route-id="@Model.Movie?.MovieId" class="btn btn-secondary btn-nav">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+            <button class="btn btn-primary btn-nav" id="continueBtn" onclick="continueToSeats()" disabled>
+                Tiếp tục chọn ghế <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/showtime.js"></script>
 }

@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize register form
 function initializeRegisterForm() {
     const form = document.getElementById('registerForm');
+    if (!form || form.dataset.serverAuth === 'true') {
+        return;
+    }
     const fullNameInput = document.getElementById('registerFullName');
     const emailInput = document.getElementById('registerEmail');
     const phoneInput = document.getElementById('registerPhone');
@@ -497,6 +500,10 @@ document.head.appendChild(style);
 
 // Check if user is already logged in
 window.addEventListener('load', function() {
+    const serverAuthForm = document.querySelector('form[data-server-auth="true"]');
+    if (serverAuthForm) {
+        return;
+    }
     const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
     if (token) {
         const urlParams = new URLSearchParams(window.location.search);

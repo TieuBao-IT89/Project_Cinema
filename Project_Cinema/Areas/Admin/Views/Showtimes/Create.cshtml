@@ -1,0 +1,84 @@
+@model Project_Cinema.ViewModels.ShowtimeFormViewModel
+
+@{
+    ViewData["AdminTitle"] = "Thêm lịch chiếu";
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-calendar-alt"></i> Thêm lịch chiếu
+            </h2>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="table-card">
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-grid">
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Thông tin lịch chiếu</h3>
+                            <p class="form-card-subtitle">Chọn phim, phòng và thời gian chiếu.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Phim</label>
+                                <select asp-for="Showtime.MovieId" class="form-select">
+                                    @foreach (var movie in Model.Movies)
+                                    {
+                                        <option value="@movie.MovieId">@movie.Title</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Phòng</label>
+                                <select asp-for="Showtime.RoomId" class="form-select">
+                                    @foreach (var room in Model.Rooms)
+                                    {
+                                        <option value="@room.RoomId">@room.CinemaName - @room.RoomName (@room.RoomType)</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Bắt đầu</label>
+                                <input asp-for="Showtime.StartsAt" type="datetime-local" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Kết thúc</label>
+                                <input asp-for="Showtime.EndsAt" type="datetime-local" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Giá & trạng thái</h3>
+                            <p class="form-card-subtitle">Thiết lập giá và tình trạng bán vé.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Giá vé</label>
+                                <input asp-for="Showtime.BasePrice" class="form-control" placeholder="120000" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Trạng thái</label>
+                                <select asp-for="Showtime.Status" class="form-select">
+                                    <option value="scheduled">Đang mở</option>
+                                    <option value="cancelled">Hủy</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-help">Gợi ý: mở suất trước 7-14 ngày để bán vé.</div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a asp-area="Admin" asp-controller="Showtimes" asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>

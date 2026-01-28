@@ -10,9 +10,21 @@ document.addEventListener('DOMContentLoaded', function() {
 // Initialize login form
 function initializeLoginForm() {
     const form = document.getElementById('loginForm');
+    if (!form) {
+        return;
+    }
     const identifierInput = document.getElementById('loginIdentifier');
     const passwordInput = document.getElementById('loginPassword');
     const submitBtn = document.getElementById('loginSubmitBtn');
+
+    if (form.dataset.serverAuth === 'true') {
+        if (submitBtn) {
+            submitBtn.addEventListener('click', function () {
+                form.submit();
+            });
+        }
+        return;
+    }
     
     // Real-time validation
     identifierInput.addEventListener('input', function() {
@@ -33,6 +45,9 @@ function initializeLoginForm() {
     
     // Form submission
     form.addEventListener('submit', function(e) {
+        if (form.dataset.serverAuth === 'true') {
+            return;
+        }
         e.preventDefault();
         handleLogin();
     });
@@ -286,6 +301,10 @@ document.head.appendChild(style);
 
 // Check if user is already logged in
 window.addEventListener('load', function() {
+    const serverAuthForm = document.querySelector('form[data-server-auth="true"]');
+    if (serverAuthForm) {
+        return;
+    }
     const token = localStorage.getItem('userToken') || sessionStorage.getItem('userToken');
     if (token) {
         // User is already logged in

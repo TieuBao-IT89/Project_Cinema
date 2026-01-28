@@ -1,0 +1,75 @@
+@model Project_Cinema.ViewModels.RoomIndexViewModel
+
+@{
+    ViewData["AdminTitle"] = "Quản lý phòng";
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-door-open"></i> Quản lý phòng
+            </h2>
+            <p class="section-subtitle">Quản lý phòng chiếu theo từng rạp</p>
+        </div>
+        <div class="page-header-right">
+            <a asp-area="Admin" asp-controller="Rooms" asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm phòng
+            </a>
+        </div>
+    </section>
+
+    <section class="table-section">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Danh sách phòng</h3>
+            </div>
+            <div class="table-body">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Rạp</th>
+                            <th>Phòng</th>
+                            <th>Định dạng</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Items.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="empty-row">Chưa có dữ liệu phòng.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var room in Model.Items)
+                            {
+                                <tr>
+                                    <td>@room.CinemaName</td>
+                                    <td>@room.RoomName</td>
+                                    <td>@room.RoomType</td>
+                                    <td>@room.Status</td>
+                                    <td>
+                                        <a asp-area="Admin" asp-controller="Rooms" asp-action="Edit" asp-route-id="@room.RoomId"
+                                           class="btn btn-secondary btn-sm">
+                                            Sửa
+                                        </a>
+                                        <form asp-area="Admin" asp-controller="Rooms" asp-action="Delete" asp-route-id="@room.RoomId"
+                                              method="post" style="display:inline-block">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xóa phòng này?');">
+                                                Xóa
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>

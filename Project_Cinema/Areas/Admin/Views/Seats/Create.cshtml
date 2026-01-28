@@ -1,0 +1,75 @@
+@model Project_Cinema.ViewModels.SeatFormViewModel
+
+@{
+    ViewData["AdminTitle"] = "Thêm ghế";
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-chair"></i> Thêm ghế
+            </h2>
+        </div>
+    </section>
+
+    <section class="form-section">
+        <div class="table-card">
+            <form method="post">
+                @Html.AntiForgeryToken()
+                <div class="form-grid">
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Thông tin ghế</h3>
+                            <p class="form-card-subtitle">Thiết lập hàng ghế và vị trí.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Phòng</label>
+                                <select asp-for="Seat.RoomId" class="form-select">
+                                    @foreach (var room in Model.Rooms)
+                                    {
+                                        <option value="@room.RoomId">@room.CinemaName - @room.RoomName</option>
+                                    }
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Hàng</label>
+                                <input asp-for="Seat.SeatRow" class="form-control" placeholder="A" />
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label">Số ghế</label>
+                                <input asp-for="Seat.SeatNumber" class="form-control" placeholder="1" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-section-card">
+                        <div class="form-card-header">
+                            <h3 class="form-card-title">Thiết lập</h3>
+                            <p class="form-card-subtitle">Loại ghế và trạng thái.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Loại ghế</label>
+                                <input asp-for="Seat.SeatType" class="form-control" placeholder="regular / vip / couple" />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Trạng thái</label>
+                                <select asp-for="Seat.Status" class="form-select">
+                                    <option value="active">Hoạt động</option>
+                                    <option value="inactive">Tạm dừng</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-help">Gợi ý: ghế VIP/couple cần giá riêng.</div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Lưu</button>
+                    <a asp-area="Admin" asp-controller="Seats" asp-action="Index" class="btn btn-secondary">Hủy</a>
+                </div>
+            </form>
+        </div>
+    </section>
+</main>

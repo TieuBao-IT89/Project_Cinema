@@ -1,4 +1,242 @@
-﻿@*
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Đăng nhập";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+    var registered = ViewData["Registered"] as bool? ?? false;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+}
+
+<section class="login-section">
+    <div class="login-container">
+        <!-- Left Side - Visual/Branding -->
+        <div class="login-visual-side">
+            <div class="visual-content">
+                <div class="floating-shapes">
+                    <div class="shape shape-1"></div>
+                    <div class="shape shape-2"></div>
+                    <div class="shape shape-3"></div>
+                    <div class="shape shape-4"></div>
+                </div>
+
+                <div class="brand-content">
+                    <div class="brand-logo-large">
+                        <i class="fas fa-film"></i>
+                        <span>CinemaHub</span>
+                    </div>
+                    <h1 class="brand-title">Chào mừng trở lại!</h1>
+                    <p class="brand-subtitle">Đăng nhập để tiếp tục trải nghiệm điện ảnh tuyệt vời</p>
+
+                    <div class="feature-highlights">
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Đặt vé nhanh chóng</strong>
+                                <span>Chỉ với vài cú click</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Ưu đãi độc quyền</strong>
+                                <span>Mã giảm giá hấp dẫn</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="feature-text">
+                                <strong>Bảo mật tuyệt đối</strong>
+                                <span>Thông tin được mã hóa</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Login Form -->
+        <div class="login-form-side">
+            <div class="form-decorations">
+                <div class="decoration-circle decoration-1"></div>
+                <div class="decoration-circle decoration-2"></div>
+                <div class="decoration-circle decoration-3"></div>
+            </div>
+
+            <div class="form-wrapper">
+                <div class="login-card">
+                    <div class="login-card-header">
+                        <div class="login-icon-wrapper">
+                            <div class="icon-inner">
+                                <i class="fas fa-user-circle"></i>
+                            </div>
+                            <div class="icon-glow"></div>
+                        </div>
+                        <h2 class="login-card-title">
+                            <span class="title-text">Đăng nhập</span>
+                            <span class="title-accent">tài khoản</span>
+                        </h2>
+                        <p class="login-card-subtitle">Nhập thông tin để truy cập vào tài khoản của bạn</p>
+                    </div>
+
+                    @if (registered)
+                    {
+                        <div class="alert-message success" style="display: flex;">
+                            <i class="alert-icon fas fa-check-circle"></i>
+                            <span class="alert-text">Đăng ký thành công! Vui lòng đăng nhập.</span>
+                        </div>
+                    }
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert-message error" style="display: flex;">
+                            <i class="alert-icon fas fa-exclamation-circle"></i>
+                            <span class="alert-text">
+                                @Html.ValidationSummary(false, "", new { @class = "validation-summary" })
+                            </span>
+                        </div>
+                    }
+
+                    <form id="loginForm" class="login-form" asp-controller="Account" asp-action="Login" method="post" data-server-auth="true">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+                        <div class="form-group-login floating-label-group">
+                            <div class="input-wrapper-modern">
+                                <i class="input-icon-left fas fa-envelope"></i>
+                                <input asp-for="Identifier"
+                                       id="loginIdentifier"
+                                       class="form-input-modern"
+                                       placeholder=" "
+                                       autocomplete="username" />
+                                <label for="loginIdentifier" class="floating-label">
+                                    Email hoặc số điện thoại
+                                </label>
+                                <div class="input-icon-right">
+                                    <i class="fas fa-check-circle input-success-icon" style="display: none;"></i>
+                                    <i class="fas fa-exclamation-circle input-error-icon" style="display: none;"></i>
+                                </div>
+                            </div>
+                            <span class="error-message" asp-validation-for="Identifier"></span>
+                        </div>
+
+                        <div class="form-group-login floating-label-group">
+                            <div class="input-wrapper-modern">
+                                <i class="input-icon-left fas fa-lock"></i>
+                                <input asp-for="Password"
+                                       id="loginPassword"
+                                       class="form-input-modern"
+                                       placeholder=" "
+                                       autocomplete="current-password" />
+                                <label for="loginPassword" class="floating-label">
+                                    Mật khẩu
+                                </label>
+                                <button type="button" class="password-toggle" id="togglePassword" aria-label="Toggle password visibility">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <div class="input-icon-right">
+                                    <i class="fas fa-check-circle input-success-icon" style="display: none;"></i>
+                                    <i class="fas fa-exclamation-circle input-error-icon" style="display: none;"></i>
+                                </div>
+                            </div>
+                            <span class="error-message" asp-validation-for="Password"></span>
+                        </div>
+
+                        <div class="form-options">
+                            <label class="checkbox-label">
+                                <input asp-for="RememberMe" class="checkbox-input">
+                                <span class="checkbox-custom"></span>
+                                <span class="checkbox-text">Ghi nhớ đăng nhập</span>
+                            </label>
+                            <a href="#" class="forgot-password-link">
+                                <i class="fas fa-key"></i> Quên mật khẩu?
+                            </a>
+                        </div>
+
+                        <button type="submit" form="loginForm" class="btn-login-submit" id="loginSubmitBtn">
+                            <span class="btn-text">
+                                <i class="fas fa-sign-in-alt"></i> Đăng nhập
+                            </span>
+                        </button>
+                    </form>
+
+                    <div class="form-divider">
+                        <span>hoặc</span>
+                    </div>
+
+                    <div class="social-login">
+                        <button type="button" class="btn-social btn-google">
+                            <i class="fab fa-google"></i>
+                            <span>Đăng nhập với Google</span>
+                        </button>
+                        <button type="button" class="btn-social btn-facebook">
+                            <i class="fab fa-facebook-f"></i>
+                            <span>Đăng nhập với Facebook</span>
+                        </button>
+                    </div>
+
+                    <div class="support-links">
+                        <p class="support-links-text">
+                            Chưa có tài khoản?
+                            <a asp-controller="Account" asp-action="Register" class="register-link">
+                                <i class="fas fa-user-plus"></i> Đăng ký ngay
+                            </a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="notes-section">
+    <div class="container">
+        <div class="notes-card">
+            <h3 class="notes-title">
+                <i class="fas fa-info-circle"></i> Lưu ý khi đăng nhập
+            </h3>
+            <div class="notes-content">
+                <div class="note-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Bảo mật mật khẩu:</strong> Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số.
+                    </div>
+                </div>
+                <div class="note-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Không chia sẻ thông tin:</strong> Không chia sẻ tài khoản và mật khẩu với bất kỳ ai để đảm bảo an toàn.
+                    </div>
+                </div>
+                <div class="note-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Ghi nhớ đăng nhập:</strong> Chỉ sử dụng tính năng "Ghi nhớ đăng nhập" trên thiết bị cá nhân của bạn.
+                    </div>
+                </div>
+                <div class="note-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <strong>Cần hỗ trợ?</strong> Liên hệ hotline <a href="tel:19001234">1900 1234</a> hoặc email <a href="mailto:support@cinemahub.vn">support@cinemahub.vn</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/login.js"></script>
+}
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{

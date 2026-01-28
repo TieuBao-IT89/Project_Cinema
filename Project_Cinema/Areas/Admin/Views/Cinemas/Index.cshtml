@@ -1,0 +1,88 @@
+@model IEnumerable<Project_Cinema.Models.CinemaModel>
+
+@{
+    ViewData["AdminTitle"] = "Quản lý rạp";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-cinemas.css" />
+}
+
+<main class="dashboard-content">
+    <section class="page-header">
+        <div class="page-header-left">
+            <h2 class="section-title">
+                <i class="fas fa-building"></i> Quản lý rạp chiếu
+            </h2>
+            <p class="section-subtitle">Quản lý danh sách rạp chiếu và thông tin liên quan</p>
+        </div>
+        <div class="page-header-right">
+            <a asp-area="Admin" asp-controller="Cinemas" asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Thêm rạp mới
+            </a>
+        </div>
+    </section>
+
+    <section class="table-section">
+        <div class="table-card">
+            <div class="table-header">
+                <h3 class="table-title">Danh sách rạp chiếu</h3>
+                <div class="table-actions">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Tìm kiếm rạp...">
+                    </div>
+                </div>
+            </div>
+            <div class="table-body">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Tên rạp</th>
+                            <th>Địa chỉ</th>
+                            <th>Thành phố</th>
+                            <th>Số điện thoại</th>
+                            <th>Trạng thái</th>
+                            <th>Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cinemasTableBody">
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="empty-row">Chưa có dữ liệu rạp.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var cinema in Model)
+                            {
+                                <tr>
+                                    <td>@cinema.CinemaName</td>
+                                    <td>@cinema.Address</td>
+                                    <td>@(cinema.City ?? "--")</td>
+                                    <td>@(cinema.Phone ?? "--")</td>
+                                    <td>@cinema.Status</td>
+                                    <td>
+                                        <a asp-area="Admin" asp-controller="Cinemas" asp-action="Edit" asp-route-id="@cinema.CinemaId"
+                                           class="btn btn-secondary btn-sm">
+                                            Sửa
+                                        </a>
+                                        <form asp-area="Admin" asp-controller="Cinemas" asp-action="Delete" asp-route-id="@cinema.CinemaId"
+                                              method="post" style="display:inline-block">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xóa rạp này?');">
+                                                Xóa
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+</main>
+

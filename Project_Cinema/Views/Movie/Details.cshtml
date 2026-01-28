@@ -1,56 +1,264 @@
 @model Project_Cinema.Models.MovieModel
 
 @{
-    ViewData["Title"] = "Chi tiết phim";
+    ViewData["Title"] = $"{Model.Title} - Chi tiết phim";
+    var posterUrl = string.IsNullOrWhiteSpace(Model.PosterUrl)
+        ? $"https://via.placeholder.com/400x600?text={Model.Title}"
+        : Model.PosterUrl;
+    var bannerUrl = string.IsNullOrWhiteSpace(Model.PosterUrl)
+        ? "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1920"
+        : Model.PosterUrl;
+    var isNew = Model.ReleaseDate != null && Model.ReleaseDate.Value >= DateTime.Today.AddDays(-30);
+    var isHot = string.Equals(Model.Status, "now_showing", StringComparison.OrdinalIgnoreCase);
 }
 
-<section class="page-banner">
-    <div class="page-banner-overlay"></div>
-    <div class="page-banner-content">
+@section Styles {
+    <link rel="stylesheet" href="~/css/movie-details.css" />
+}
+
+<!-- Movie Banner Hero Section -->
+<section class="movie-banner">
+    <div class="movie-banner-image" style="background-image: url('@bannerUrl');"></div>
+    <div class="movie-banner-overlay"></div>
+    <div class="movie-banner-content">
         <div class="container">
-            <h1 class="page-title">@Model.Title</h1>
-            <p class="page-subtitle">@Model.Description</p>
-        </div>
-    </div>
-</section>
-
-<section class="movie-details-section">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="movie-poster">
-                    <img class="img-fluid rounded"
-                         src="@(string.IsNullOrWhiteSpace(Model.PosterUrl) ? $"https://via.placeholder.com/400x600?text={Model.Title}" : Model.PosterUrl)"
-                         alt="@Model.Title" />
-                </div>
-            </div>
-            <div class="col-lg-8">
-                <div class="movie-info">
-                    <h2 class="section-title">@Model.Title</h2>
-
-                    <div class="movie-meta mb-3">
-                        <div><strong>Thời lượng:</strong> @Model.DurationMin phút</div>
-                        <div><strong>Ngày phát hành:</strong> @(Model.ReleaseDate?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</div>
-                        <div><strong>Ngôn ngữ:</strong> @(Model.Language ?? "Chưa cập nhật")</div>
-                        <div><strong>Độ tuổi:</strong> @(Model.AgeRating ?? "Chưa cập nhật")</div>
-                        <div><strong>Trạng thái:</strong> @Model.Status</div>
-                    </div>
-
-                    @if (!string.IsNullOrWhiteSpace(Model.TrailerUrl))
+            <div class="movie-banner-info">
+                <div class="movie-banner-badges">
+                    @if (isHot)
                     {
-                        <a class="btn btn-secondary me-2" href="@Model.TrailerUrl" target="_blank" rel="noopener noreferrer">
-                            <i class="fas fa-play"></i> Xem trailer
-                        </a>
+                        <span class="badge badge-hot">HOT</span>
                     }
-
-                    <a class="btn btn-primary"
-                       asp-controller="Showtime"
-                       asp-action="Index"
-                       asp-route-movieId="@Model.MovieId">
-                        Đặt vé
+                    @if (isNew)
+                    {
+                        <span class="badge badge-new">NEW</span>
+                    }
+                </div>
+                <h1 class="movie-banner-title">@Model.Title</h1>
+                <div class="movie-banner-meta">
+                    <span class="meta-item">
+                        <i class="fas fa-globe"></i>
+                        <span>@(Model.Language ?? "Chưa cập nhật")</span>
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>@Model.DurationMin phút</span>
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>@(Model.ReleaseDate?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</span>
+                    </span>
+                    <span class="meta-item">
+                        <i class="fas fa-user-friends"></i>
+                        <span>@(Model.AgeRating ?? "Chưa cập nhật")</span>
+                    </span>
+                </div>
+                <p class="movie-banner-description">
+                    @(string.IsNullOrWhiteSpace(Model.Description) ? "Chưa cập nhật nội dung phim." : Model.Description)
+                </p>
+                <div class="movie-banner-actions">
+                    <a href="#showtimes" class="btn btn-primary btn-large">
+                        <i class="fas fa-ticket-alt"></i> Đặt vé ngay
+                    </a>
+                    <a href="#trailer" class="btn btn-secondary btn-large">
+                        <i class="fas fa-play"></i> Xem trailer
                     </a>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+<!-- Movie Overview Section -->
+<section class="movie-overview">
+    <div class="container">
+        <div class="overview-grid">
+            <div class="overview-poster">
+                <img src="@posterUrl" alt="@Model.Title">
+                <div class="poster-overlay">
+                    <a href="@posterUrl" target="_blank" rel="noopener noreferrer" class="btn btn-primary">
+                        <i class="fas fa-images"></i> Xem poster
+                    </a>
+                </div>
+            </div>
+            <div class="overview-info">
+                <h2 class="overview-title">Thông tin phim</h2>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="info-label">
+                            <i class="fas fa-film"></i> Tên phim:
+                        </span>
+                        <span class="info-value">@Model.Title</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">
+                            <i class="fas fa-clock"></i> Thời lượng:
+                        </span>
+                        <span class="info-value">@Model.DurationMin phút</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">
+                            <i class="fas fa-globe"></i> Ngôn ngữ:
+                        </span>
+                        <span class="info-value">@(Model.Language ?? "Chưa cập nhật")</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">
+                            <i class="fas fa-calendar-alt"></i> Ngày khởi chiếu:
+                        </span>
+                        <span class="info-value">@(Model.ReleaseDate?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">
+                            <i class="fas fa-user-friends"></i> Độ tuổi:
+                        </span>
+                        <span class="info-value">@(Model.AgeRating ?? "Chưa cập nhật")</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">
+                            <i class="fas fa-info-circle"></i> Trạng thái:
+                        </span>
+                        <span class="info-value">@Model.Status</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Movie Description Section -->
+<section class="movie-description">
+    <div class="container">
+        <h2 class="section-title">Nội dung phim</h2>
+        <div class="description-content">
+            <p>
+                @(string.IsNullOrWhiteSpace(Model.Description)
+                    ? "Chưa cập nhật nội dung phim."
+                    : Model.Description)
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Trailer Section -->
+<section id="trailer" class="trailer-section" data-trailer-url="@Model.TrailerUrl">
+    <div class="container">
+        <div class="trailer-header">
+            <h2 class="section-title">Trailer phim</h2>
+            <p class="trailer-subtitle">Xem trước đoạn giới thiệu của bộ phim</p>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.TrailerUrl))
+        {
+            <div class="trailer-wrapper">
+                <div class="trailer-preview" id="trailerPreview">
+                    <div class="trailer-thumbnail" style="background-image: url('@bannerUrl');">
+                        <div class="trailer-overlay"></div>
+                        <div class="play-button-container">
+                            <button class="play-button" onclick="playTrailer()">
+                                <i class="fas fa-play"></i>
+                            </button>
+                            <div class="play-button-ripple"></div>
+                        </div>
+                        <div class="trailer-info-overlay">
+                            <h3 class="trailer-title">Official Trailer</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="trailer-video" id="trailerVideo" style="display: none;">
+                    <button class="close-trailer" onclick="closeTrailer()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <iframe
+                        id="trailerIframe"
+                        src=""
+                        title="@Model.Title Trailer"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="trailer-empty">
+                Trailer đang được cập nhật.
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Showtimes Section -->
+<section id="showtimes" class="showtimes-section">
+    <div class="container">
+        <h2 class="section-title">Lịch chiếu & Rạp chiếu</h2>
+        <div class="showtimes-empty">
+            Hiện chưa có lịch chiếu cho phim này.
+            <div class="mt-3">
+                <a class="btn btn-primary"
+                   asp-controller="Showtime"
+                   asp-action="Index"
+                   asp-route-movieId="@Model.MovieId">
+                    Xem lịch chiếu
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Related Movies Section -->
+<section class="related-movies">
+    <div class="container">
+        <h2 class="section-title">Phim liên quan</h2>
+        <div class="movies-grid">
+            <div class="movie-card">
+                <div class="movie-info">
+                    <h3 class="movie-name">Xem thêm phim khác</h3>
+                    <div class="movie-details">
+                        <span class="genre">Danh sách phim hiện có</span>
+                    </div>
+                    <a class="btn btn-sm btn-primary mt-3" asp-controller="Movie" asp-action="Index">
+                        Xem danh sách phim
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Reviews Section -->
+<section class="reviews-section">
+    <div class="container">
+        <h2 class="section-title">Đánh giá & Bình luận</h2>
+        <div class="reviews-grid">
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="reviewer-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="reviewer-details">
+                            <h4 class="reviewer-name">Nguyễn Văn A</h4>
+                            <div class="review-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <span class="rating-text">5.0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="review-date">2 ngày trước</span>
+                </div>
+                <p class="review-content">
+                    Phim rất hấp dẫn, kỹ xảo đẹp và nội dung cảm xúc. Rất đáng xem!
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/movie-details.js"></script>
+}
