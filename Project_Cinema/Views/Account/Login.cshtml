@@ -4,6 +4,7 @@
     ViewData["Title"] = "Đăng nhập";
     var returnUrl = ViewData["ReturnUrl"] as string;
     var registered = ViewData["Registered"] as bool? ?? false;
+    var reset = ViewData["Reset"] as bool? ?? false;
 }
 
 @section Styles {
@@ -95,6 +96,14 @@
                         </div>
                     }
 
+                    @if (reset)
+                    {
+                        <div class="alert-message success" style="display: flex;">
+                            <i class="alert-icon fas fa-check-circle"></i>
+                            <span class="alert-text">Đặt lại mật khẩu thành công! Vui lòng đăng nhập.</span>
+                        </div>
+                    }
+
                     @if (!ViewData.ModelState.IsValid)
                     {
                         <div class="alert-message error" style="display: flex;">
@@ -156,7 +165,7 @@
                                 <span class="checkbox-custom"></span>
                                 <span class="checkbox-text">Ghi nhớ đăng nhập</span>
                             </label>
-                            <a href="#" class="forgot-password-link">
+                            <a asp-controller="Account" asp-action="ForgotPassword" class="forgot-password-link">
                                 <i class="fas fa-key"></i> Quên mật khẩu?
                             </a>
                         </div>

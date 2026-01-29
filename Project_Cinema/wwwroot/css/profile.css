@@ -2,7 +2,8 @@
 
 /* Profile Section */
 .profile-section {
-    padding: calc(80px + var(--spacing-xl)) 0 var(--spacing-3xl);
+    /* Header is fixed; add top space to avoid overlay */
+    padding: calc(108px + var(--spacing-xl)) 0 var(--spacing-3xl);
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
     min-height: calc(100vh - 80px);
 }
@@ -191,7 +192,7 @@
 /* Profile Sidebar */
 .profile-sidebar {
     position: sticky;
-    top: calc(80px + var(--spacing-lg));
+    top: calc(108px + var(--spacing-lg));
 }
 
 .profile-nav {
@@ -621,6 +622,11 @@
     color: #dc3545;
 }
 
+.booking-status.expired {
+    background: rgba(245, 158, 11, 0.12);
+    color: #b45309;
+}
+
 .booking-details {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -731,6 +737,54 @@
 .btn-download:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+}
+
+/* Booking filters */
+.booking-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: var(--spacing-lg);
+}
+
+.filter-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(15, 23, 42, 0.10);
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: var(--font-weight-semibold);
+    transition: all var(--transition-base);
+}
+
+.filter-pill:hover {
+    transform: translateY(-1px);
+    border-color: rgba(229, 9, 20, 0.35);
+    box-shadow: var(--shadow-sm);
+}
+
+.filter-pill.active {
+    border-color: rgba(229, 9, 20, 0.35);
+    background: rgba(229, 9, 20, 0.08);
+    color: var(--primary-color);
+}
+
+.pill-count {
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(15, 23, 42, 0.06);
+    color: #0f172a;
+    font-weight: var(--font-weight-bold);
+    font-size: 12px;
+}
+
+.filter-pill.active .pill-count {
+    background: rgba(229, 9, 20, 0.12);
+    color: #991b1b;
 }
 
 /* Checkbox Group */
@@ -1035,5 +1089,130 @@
     
     .btn {
         width: 100%;
+    }
+}
+
+/* ---- Enhancements (less "đơn điệu") ---- */
+.profile-section {
+    background:
+        radial-gradient(900px 420px at 15% 0%, rgba(229, 9, 20, 0.08), transparent 60%),
+        radial-gradient(900px 420px at 85% 10%, rgba(0, 212, 255, 0.08), transparent 60%),
+        linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+}
+
+.profile-kpis {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--spacing-md);
+    margin: 0 0 var(--spacing-xl);
+}
+
+.kpi-card {
+    background: var(--bg-card);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: var(--border-radius-lg);
+    padding: 16px 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: transform var(--transition-base), box-shadow var(--transition-base);
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background:
+        radial-gradient(circle at 20% 10%, rgba(229, 9, 20, 0.14), transparent 55%),
+        radial-gradient(circle at 90% 0%, rgba(0, 212, 255, 0.16), transparent 55%);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.kpi-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(229, 9, 20, 0.08);
+    color: var(--primary-color);
+    font-size: 18px;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.kpi-body {
+    min-width: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.kpi-label {
+    font-size: 12px;
+    font-weight: var(--font-weight-bold);
+    color: var(--text-secondary);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+}
+
+.kpi-value {
+    font-size: 20px;
+    font-weight: var(--font-weight-extrabold);
+    color: var(--text-primary);
+    line-height: 1.1;
+}
+
+.kpi-value-small {
+    font-size: 14px;
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+}
+
+.form-help {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Make main card feel more premium */
+.profile-main {
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    box-shadow: var(--shadow-lg);
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+}
+
+/* Stronger focus states */
+.profile-form .form-input:focus {
+    outline: none;
+    border-color: rgba(229, 9, 20, 0.5);
+    box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.12);
+}
+
+@media (max-width: 1024px) {
+    .profile-kpis {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .profile-kpis {
+        grid-template-columns: 1fr;
     }
 }

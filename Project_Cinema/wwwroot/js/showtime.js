@@ -7,10 +7,16 @@ document.addEventListener('DOMContentLoaded', function() {
     updateSummary();
 
     const filterForm = document.getElementById('showtimeFilterForm');
+    const movieFilter = document.getElementById('movie-filter');
     const cinemaFilter = document.getElementById('cinema-filter');
     const dateFilter = document.getElementById('date-filter');
 
     if (filterForm) {
+        if (movieFilter) {
+            movieFilter.addEventListener('change', function () {
+                filterForm.submit();
+            });
+        }
         if (cinemaFilter) {
             cinemaFilter.addEventListener('change', function () {
                 filterForm.submit();
@@ -22,6 +28,15 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     }
+
+    // Highlight correct date tab if server selected a date
+    syncDateTabsWithInput();
+
+    // Keep selection when user navigates back from Seat page
+    restoreSelectionFromSession();
+
+    // Auto-scroll to selected cinema (or selected showtime)
+    autoScrollToSelectedCinema();
 });
 
 // Initialize date tabs
@@ -60,6 +75,32 @@ function initializeDates() {
     if (dateFilter && !dateFilter.value) {
         dateFilter.value = formatDateInput(dates[0]);
     }
+}
+
+function syncDateTabsWithInput() {
+    const dateFilter = document.getElementById('date-filter');
+    if (!dateFilter || !dateFilter.value) return;
+
+    const selected = new Date(dateFilter.value + "T00:00:00");
+    if (Number.isNaN(selected.getTime())) return;
+
+    const today = new Date();
+    const base = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const diffDays = Math.round((selected.getTime() - base.getTime()) / 86400000);
+
+    // Remove active class from all tabs
+    const tabs = document.querySelectorAll('.date-tab');
+    tabs.forEach(tab => tab.classList.remove('active'));
+
+    let key = 'today';
+    if (diffDays === 1) key = 'tomorrow';
+    else if (diffDays >= 2 && diffDays <= 6) key = `day${diffDays + 1}`;
+
+    const selectedTab = document.querySelector(`[data-date="${key}"]`);
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    updateSummaryDate(selected);
 }
 
 // Format date for display (short)
@@ -169,6 +210,75 @@ function selectShowtime(element) {
     if (continueBtn) {
         continueBtn.disabled = false;
     }
+}
+
+// Pick and go directly to seats
+function pickShowtimeAndGo(element) {
+    selectShowtime(element);
+
+    const showtimeId = element.dataset.showtimeId;
+    if (!showtimeId) return false;
+
+    const bookingData = {
+        movie: document.getElementById('summary-movie')?.textContent || '',
+        cinema: document.getElementById('summary-cinema')?.textContent || '',
+        date: document.getElementById('summary-date')?.textContent || '',
+        time: document.getElementById('summary-time')?.textContent || '',
+        format: document.getElementById('summary-format')?.textContent || '',
+        price: document.getElementById('summary-price')?.textContent || '',
+        showtimeId
+    };
+    sessionStorage.setItem('bookingData', JSON.stringify(bookingData));
+
+    window.location.href = `/Seat/Index?showtimeId=${showtimeId}`;
+    return false;
+}
+
+function restoreSelectionFromSession() {
+    try {
+        const raw = sessionStorage.getItem('bookingData');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        const showtimeId = data?.showtimeId;
+        if (!showtimeId) return;
+
+        const el = document.querySelector(`.time-slot-card[data-showtime-id="${showtimeId}"]`);
+        if (!el) return;
+
+        // Only restore if the slot exists on this page (same filters/date/movie)
+        selectShowtime(el);
+
+        // Enable continue
+        const continueBtn = document.getElementById('continueBtn');
+        if (continueBtn) continueBtn.disabled = false;
+    } catch {
+        // ignore
+    }
+}
+
+function autoScrollToSelectedCinema() {
+    const cinemaFilter = document.getElementById('cinema-filter');
+    const selectedCinemaId = cinemaFilter?.value;
+
+    // Prefer selected showtime in session (more precise)
+    try {
+        const raw = sessionStorage.getItem('bookingData');
+        if (raw) {
+            const data = JSON.parse(raw);
+            if (data?.showtimeId) {
+                const slot = document.querySelector(`.time-slot-card[data-showtime-id="${data.showtimeId}"]`);
+                if (slot && slot.scrollIntoView) {
+                    setTimeout(() => slot.scrollIntoView({ behavior: 'smooth', block: 'center' }), 120);
+                    return;
+                }
+            }
+        }
+    } catch { }
+
+    if (!selectedCinemaId) return;
+    const theater = document.querySelector(`.theater-showtime-card[data-cinema="${selectedCinemaId}"]`);
+    if (!theater || !theater.scrollIntoView) return;
+    setTimeout(() => theater.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
 }
 
 // Update summary

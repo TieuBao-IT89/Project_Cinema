@@ -134,6 +134,108 @@
     position: relative;
 }
 
+/* ---- Quick booking on Movie/Details ---- */
+.quick-booking-card {
+    margin-top: var(--spacing-xl);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.quick-booking-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 16px 18px;
+    background: linear-gradient(135deg, rgba(229, 9, 20, 0.08), rgba(255, 107, 53, 0.06));
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.quick-booking-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: var(--font-weight-extrabold);
+    color: var(--text-primary);
+}
+
+.quick-booking-title i {
+    color: var(--primary-color);
+}
+
+.quick-booking-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: var(--font-weight-bold);
+    white-space: nowrap;
+}
+
+.quick-booking-link:hover {
+    text-decoration: underline;
+}
+
+.quick-booking-grid {
+    padding: 18px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 14px;
+    align-items: end;
+}
+
+.qb-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.qb-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: var(--font-weight-semibold);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+.qb-label i {
+    color: var(--primary-color);
+}
+
+.qb-control {
+    padding: 14px 16px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: var(--border-radius-sm);
+    font-family: var(--font-family);
+    transition: all var(--transition-base);
+}
+
+.qb-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--bg-card);
+    box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.12);
+}
+
+.qb-cta .btn {
+    min-height: 52px;
+}
+
+.qb-hint {
+    padding: 0 18px 16px;
+    color: var(--text-secondary);
+    font-weight: var(--font-weight-semibold);
+}
+
+@media (max-width: 992px) {
+    .quick-booking-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 .movie-overview::before {
     content: '';
     position: absolute;

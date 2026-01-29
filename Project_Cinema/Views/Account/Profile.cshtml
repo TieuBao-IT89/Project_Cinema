@@ -1,4 +1,478 @@
-﻿@*
+@model Project_Cinema.ViewModels.ProfileViewModel
+
+@{
+    ViewData["Title"] = "Thông tin tài khoản";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/profile.css" />
+}
+
+<script>
+    window.__profileData = {
+        fullName: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.FullName)),
+        email: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Email)),
+        avatarUrl: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.AvatarUrl)),
+        paidBookingsCount: @Model.PaidBookingsCount,
+        joined: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.JoinedMonthYear))
+    };
+    window.__profileRoutes = {
+        ticketBaseUrl: @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Url.Action("Ticket", "Account")))
+    };
+    window.__profileActiveTab = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.ActiveTab));
+</script>
+
+<section class="profile-section">
+    <div class="container">
+        <div class="profile-header">
+            <div class="profile-background">
+                <div class="background-overlay"></div>
+                <div class="profile-header-content">
+                    <div class="profile-avatar-wrapper">
+                        <div class="profile-avatar">
+                            <img alt="Avatar" id="profileAvatar" src="@(string.IsNullOrWhiteSpace(Model.AvatarUrl) ? $"https://ui-avatars.com/api/?name={Uri.EscapeDataString(Model.FullName)}&background=e50914&color=fff&size=200" : Model.AvatarUrl)">
+                            <button class="avatar-edit-btn" id="avatarEditBtn" title="Đổi ảnh đại diện" type="button">
+                                <i class="fas fa-camera"></i>
+                            </button>
+                        </div>
+                        <div class="avatar-status">
+                            <div class="status-indicator active"></div>
+                            <span>Đang hoạt động</span>
+                        </div>
+                    </div>
+
+                    <div class="profile-info-header">
+                        <h1 class="profile-name" id="profileName">@Model.FullName</h1>
+                        <p class="profile-email" id="profileEmail">@Model.Email</p>
+                        <div class="profile-meta">
+                            <span class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                Tham gia: <strong>@Model.JoinedMonthYear</strong>
+                            </span>
+                            <span class="meta-item">
+                                <i class="fas fa-ticket-alt"></i>
+                                Đã đặt: <strong>@Model.PaidBookingsCount vé</strong>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-content">
+            <div class="profile-layout">
+                <aside class="profile-sidebar">
+                    <nav class="profile-nav">
+                        <ul>
+                            <li>
+                                <a href="#personal-info" class="nav-item active" data-tab="personal-info">
+                                    <i class="fas fa-user"></i>
+                                    <span>Thông tin cá nhân</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#booking-history" class="nav-item" data-tab="booking-history">
+                                    <i class="fas fa-history"></i>
+                                    <span>Lịch sử đặt vé</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#security" class="nav-item" data-tab="security">
+                                    <i class="fas fa-shield-alt"></i>
+                                    <span>Bảo mật</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#notifications" class="nav-item" data-tab="notifications">
+                                    <i class="fas fa-bell"></i>
+                                    <span>Thông báo</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#settings" class="nav-item" data-tab="settings">
+                                    <i class="fas fa-cog"></i>
+                                    <span>Cài đặt</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+
+                    <div class="quick-stats">
+                        <h3 class="stats-title">Thống kê</h3>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-ticket-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <strong>@Model.PaidBookingsCount</strong>
+                                <span>Vé đã đặt</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-content">
+                                <strong>Member</strong>
+                                <span>Thành viên</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <i class="fas fa-gift"></i>
+                            </div>
+                            <div class="stat-content">
+                                <strong>0</strong>
+                                <span>Mã giảm giá</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <main class="profile-main">
+                    <div class="profile-tab active" id="personal-info-tab">
+                        <div class="tab-header">
+                            <h2 class="tab-title">
+                                <i class="fas fa-user"></i> Thông tin cá nhân
+                            </h2>
+                            <p class="tab-subtitle">Quản lý thông tin cá nhân và cài đặt tài khoản của bạn</p>
+                        </div>
+
+                        <div class="profile-kpis" aria-label="Tóm tắt tài khoản">
+                            <div class="kpi-card">
+                                <div class="kpi-icon"><i class="fas fa-ticket-alt"></i></div>
+                                <div class="kpi-body">
+                                    <div class="kpi-label">Vé đã đặt</div>
+                                    <div class="kpi-value">@Model.PaidBookingsCount</div>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon"><i class="fas fa-calendar"></i></div>
+                                <div class="kpi-body">
+                                    <div class="kpi-label">Tham gia</div>
+                                    <div class="kpi-value">@Model.JoinedMonthYear</div>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon"><i class="fas fa-envelope"></i></div>
+                                <div class="kpi-body">
+                                    <div class="kpi-label">Email</div>
+                                    <div class="kpi-value kpi-value-small">@Model.Email</div>
+                                </div>
+                            </div>
+                            <div class="kpi-card">
+                                <div class="kpi-icon"><i class="fas fa-phone"></i></div>
+                                <div class="kpi-body">
+                                    <div class="kpi-label">Số điện thoại</div>
+                                    <div class="kpi-value kpi-value-small">@(!string.IsNullOrWhiteSpace(Model.Phone) ? Model.Phone : "--")</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (TempData["ProfileSuccess"] is string successMsg && !string.IsNullOrWhiteSpace(successMsg))
+                        {
+                            <div class="alert-message success" style="display: flex;">
+                                <i class="fas fa-check-circle alert-icon"></i>
+                                <span class="alert-text">@successMsg</span>
+                            </div>
+                        }
+
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <div class="alert-message error" style="display: flex;">
+                                <i class="fas fa-exclamation-circle alert-icon"></i>
+                                <div class="alert-text">
+                                    @Html.ValidationSummary(excludePropertyErrors: false)
+                                </div>
+                            </div>
+                        }
+
+                        <form id="personalInfoForm" class="profile-form" asp-controller="Account" asp-action="Profile" method="post" data-server-profile="true">
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <i class="fas fa-id-card"></i> Thông tin cơ bản
+                                </h3>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="fullName" class="form-label">
+                                            <i class="fas fa-user"></i> Họ và tên
+                                        </label>
+                                        <input asp-for="FullName" id="fullName" class="form-input" placeholder="Nhập họ và tên" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phone" class="form-label">
+                                            <i class="fas fa-phone"></i> Số điện thoại
+                                        </label>
+                                        <input asp-for="Phone" id="phone" class="form-input" placeholder="Nhập số điện thoại" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="email" class="form-label">
+                                            <i class="fas fa-envelope"></i> Email
+                                        </label>
+                                        <input asp-for="Email" id="email" class="form-input" placeholder="Nhập email" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="avatarUrl" class="form-label">
+                                            <i class="fas fa-image"></i> Avatar URL (tuỳ chọn)
+                                        </label>
+                                        <input asp-for="AvatarUrl" id="avatarUrl" class="form-input" placeholder="https://..." />
+                                        <div class="form-help">
+                                            Nhập link ảnh (png/jpg/webp). Nếu bỏ trống, hệ thống sẽ tự tạo avatar theo tên của bạn.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" id="cancelBtn">
+                                    <i class="fas fa-times"></i> Hủy
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="saveBtn">
+                                    <i class="fas fa-save"></i> Lưu thay đổi
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="profile-tab" id="booking-history-tab">
+                        <div class="tab-header">
+                            <h2 class="tab-title">
+                                <i class="fas fa-history"></i> Lịch sử đặt vé
+                            </h2>
+                            <p class="tab-subtitle">Xem lại các vé bạn đã đặt</p>
+                        </div>
+                        <div class="booking-history-list" id="bookingHistoryList">
+                            <div id="profileAlert" class="alert-message" style="display: none;">
+                                <i class="alert-icon"></i>
+                                <span class="alert-text"></span>
+                            </div>
+
+                            <div class="booking-filters" aria-label="Bộ lọc trạng thái">
+                                <a class="filter-pill @(Model.StatusFilter == "all" ? "active" : "")"
+                                   asp-controller="Account" asp-action="Profile" asp-route-tab="booking-history" asp-route-status="all" asp-fragment="booking-history">
+                                    Tất cả
+                                    <span class="pill-count">@(@Model.PaidBookingsCount + @Model.ExpiredBookingsCount + @Model.CancelledBookingsCount)</span>
+                                </a>
+                                <a class="filter-pill @(Model.StatusFilter == "paid" ? "active" : "")"
+                                   asp-controller="Account" asp-action="Profile" asp-route-tab="booking-history" asp-route-status="paid" asp-fragment="booking-history">
+                                    Đã thanh toán
+                                    <span class="pill-count">@Model.PaidBookingsCount</span>
+                                </a>
+                                <a class="filter-pill @(Model.StatusFilter == "expired" ? "active" : "")"
+                                   asp-controller="Account" asp-action="Profile" asp-route-tab="booking-history" asp-route-status="expired" asp-fragment="booking-history">
+                                    Hết hạn
+                                    <span class="pill-count">@Model.ExpiredBookingsCount</span>
+                                </a>
+                                <a class="filter-pill @(Model.StatusFilter == "cancelled" ? "active" : "")"
+                                   asp-controller="Account" asp-action="Profile" asp-route-tab="booking-history" asp-route-status="cancelled" asp-fragment="booking-history">
+                                    Đã hủy
+                                    <span class="pill-count">@Model.CancelledBookingsCount</span>
+                                </a>
+                            </div>
+
+                            @if (Model.Bookings == null || Model.Bookings.Count == 0)
+                            {
+                                <div class="empty-state">
+                                    <div class="empty-state-icon">
+                                        <i class="fas fa-ticket-alt"></i>
+                                    </div>
+                                    <h3 class="empty-state-title">Chưa có vé nào</h3>
+                                    <p class="empty-state-text">Bạn chưa có lịch sử vé nào theo bộ lọc hiện tại.</p>
+                                    <a asp-controller="Showtime" asp-action="Index" class="btn btn-primary">
+                                        <i class="fas fa-film"></i> Đặt vé ngay
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                foreach (var booking in Model.Bookings)
+                                {
+                                    <div class="booking-item">
+                                        <div class="booking-header">
+                                            <h3 class="booking-title">@booking.MovieTitle</h3>
+                                            <span class="booking-status @booking.StatusCssClass">@booking.StatusLabel</span>
+                                        </div>
+                                        <div class="booking-details">
+                                            <div class="booking-detail-item">
+                                                <i class="fas fa-building"></i>
+                                                <div>
+                                                    <div class="booking-detail-label">Rạp chiếu</div>
+                                                    <div class="booking-detail-value">@booking.CinemaName - @booking.RoomName</div>
+                                                </div>
+                                            </div>
+                                            <div class="booking-detail-item">
+                                                <i class="fas fa-calendar"></i>
+                                                <div>
+                                                    <div class="booking-detail-label">Ngày &amp; Giờ</div>
+                                                    <div class="booking-detail-value">@booking.StartsAtDisplay</div>
+                                                </div>
+                                            </div>
+                                            <div class="booking-detail-item">
+                                                <i class="fas fa-chair"></i>
+                                                <div>
+                                                    <div class="booking-detail-label">Ghế</div>
+                                                    <div class="booking-detail-value">
+                                                        <div class="booking-seats">
+                                                            @foreach (var seat in booking.SeatCodes)
+                                                            {
+                                                                <span class="seat-tag">@seat</span>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="booking-detail-item">
+                                                <i class="fas fa-barcode"></i>
+                                                <div>
+                                                    <div class="booking-detail-label">Mã đặt vé</div>
+                                                    <div class="booking-detail-value">@booking.BookingCode</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="booking-footer">
+                                            <div class="booking-price">@booking.PriceDisplay</div>
+                                            <div class="booking-actions">
+                                                <button class="btn-view-details" type="button" onclick="viewBookingDetails('@booking.BookingId')">
+                                                    <i class="fas fa-eye"></i> Chi tiết
+                                                </button>
+                                                <button class="btn-view-details" type="button" onclick="showQr('@booking.BookingCode')">
+                                                    <i class="fas fa-qrcode"></i> QR
+                                                </button>
+                                                @if (booking.CanDownload)
+                                                {
+                                                    <button class="btn-download" type="button" onclick="downloadTicket('@booking.BookingCode')">
+                                                        <i class="fas fa-download"></i> Tải vé
+                                                    </button>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+
+                    <div class="profile-tab" id="security-tab">
+                        <div class="tab-header">
+                            <h2 class="tab-title">
+                                <i class="fas fa-shield-alt"></i> Bảo mật
+                            </h2>
+                            <p class="tab-subtitle">Đổi mật khẩu để bảo vệ tài khoản của bạn</p>
+                        </div>
+
+                        @if (TempData["ProfileSecuritySuccess"] is string secOk && !string.IsNullOrWhiteSpace(secOk))
+                        {
+                            <div class="alert-message success" style="display:flex;">
+                                <i class="fas fa-check-circle alert-icon"></i>
+                                <span class="alert-text">@secOk</span>
+                            </div>
+                        }
+
+                        <form id="securityForm" class="profile-form" asp-controller="Account" asp-action="ChangePassword" method="post" data-server-security="true">
+                            @Html.AntiForgeryToken()
+
+                            <div class="form-section">
+                                <h3 class="form-section-title">
+                                    <i class="fas fa-key"></i> Đổi mật khẩu
+                                </h3>
+
+                                <div class="form-group">
+                                    <label for="currentPassword" class="form-label">
+                                        <i class="fas fa-lock"></i> Mật khẩu hiện tại
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input asp-for="Security.CurrentPassword"
+                                               type="password"
+                                               id="currentPassword"
+                                               class="form-input"
+                                               placeholder="Nhập mật khẩu hiện tại"
+                                               autocomplete="current-password" />
+                                        <button type="button" class="password-toggle-btn" data-target="currentPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span class="error-message" asp-validation-for="Security.CurrentPassword"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="newPassword" class="form-label">
+                                        <i class="fas fa-lock"></i> Mật khẩu mới
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input asp-for="Security.NewPassword"
+                                               type="password"
+                                               id="newPassword"
+                                               class="form-input"
+                                               placeholder="Nhập mật khẩu mới"
+                                               autocomplete="new-password" />
+                                        <button type="button" class="password-toggle-btn" data-target="newPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span class="error-message" asp-validation-for="Security.NewPassword"></span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="confirmNewPassword" class="form-label">
+                                        <i class="fas fa-lock"></i> Xác nhận mật khẩu mới
+                                    </label>
+                                    <div class="input-wrapper">
+                                        <input asp-for="Security.ConfirmNewPassword"
+                                               type="password"
+                                               id="confirmNewPassword"
+                                               class="form-input"
+                                               placeholder="Nhập lại mật khẩu mới"
+                                               autocomplete="new-password" />
+                                        <button type="button" class="password-toggle-btn" data-target="confirmNewPassword">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </div>
+                                    <span class="error-message" asp-validation-for="Security.ConfirmNewPassword"></span>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Cập nhật mật khẩu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="profile-tab" id="notifications-tab">
+                        <div class="tab-header">
+                            <h2 class="tab-title">
+                                <i class="fas fa-bell"></i> Thông báo
+                            </h2>
+                            <p class="tab-subtitle">Phần cài đặt thông báo sẽ làm sau</p>
+                        </div>
+                    </div>
+
+                    <div class="profile-tab" id="settings-tab">
+                        <div class="tab-header">
+                            <h2 class="tab-title">
+                                <i class="fas fa-cog"></i> Cài đặt
+                            </h2>
+                            <p class="tab-subtitle">Phần cài đặt nâng cao sẽ làm sau</p>
+                        </div>
+                    </div>
+                </main>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/profile.js"></script>
+}
+
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{

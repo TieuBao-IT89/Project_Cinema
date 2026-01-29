@@ -40,9 +40,9 @@
                     <ul>
                         <li><a asp-action="Index" asp-controller="Home">Trang chủ</a></li>
                         <li><a asp-action="Index" asp-controller="Movie">Phim</a></li>
+                        <li><a asp-action="Index" asp-controller="Showtime">Lịch chiếu</a></li>
                         <li><a asp-action="Index" asp-controller="Cinema">Rạp chiếu</a></li>
-                        <li><a href="blog.html">Tin tức</a></li>
-                        <li><a href="contact.html">Liên hệ</a></li>
+                        <li><a asp-action="Index" asp-controller="Promotion">Khuyến mãi</a></li>
                     </ul>
                 </nav>
 
@@ -50,7 +50,7 @@
                 <div class="account-area">
                     @if (User.Identity != null && User.Identity.IsAuthenticated)
                     {
-                        <span class="btn-login">Xin chào, @User.Identity.Name</span>
+                        <a class="btn-login" asp-controller="Account" asp-action="Profile">Xin chào, @User.Identity.Name</a>
                         <form asp-controller="Account" asp-action="Logout" method="post" class="logout-form">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn-register"><span>Đăng xuất</span></button>

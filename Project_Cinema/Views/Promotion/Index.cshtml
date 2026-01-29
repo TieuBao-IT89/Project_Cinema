@@ -1,5 +1,165 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@model Project_Cinema.ViewModels.PromotionIndexViewModel
+
 @{
+    ViewData["Title"] = "Khuyến mãi & Ưu đãi";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/promotion.css" />
+}
+
+<section class="promotion-banner">
+    <div class="banner-overlay"></div>
+    <div class="container">
+        <div class="banner-content">
+            <h1 class="page-title">
+                <i class="fas fa-gift"></i> Khuyến mãi & Ưu đãi
+            </h1>
+            <p class="page-subtitle">Nhiều ưu đãi hấp dẫn đang chờ bạn</p>
+        </div>
+    </div>
+</section>
+
+<section class="promotion-section">
+    <div class="container">
+        <form class="filter-bar" method="get" asp-controller="Promotion" asp-action="Index">
+            <div class="filter-group">
+                <label for="type-filter">
+                    <i class="fas fa-filter"></i> Loại ưu đãi:
+                </label>
+                <select id="type-filter" name="type" class="filter-select">
+                    <option value="all" selected="@(Model.TypeFilter == "all")">Tất cả</option>
+                    <option value="percent" selected="@(Model.TypeFilter == "percent")">Giảm %</option>
+                    <option value="amount" selected="@(Model.TypeFilter == "amount")">Voucher/Trừ tiền</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="status-filter">
+                    <i class="fas fa-calendar-check"></i> Trạng thái:
+                </label>
+                <select id="status-filter" name="status" class="filter-select">
+                    <option value="all" selected="@(Model.StatusFilter == "all")">Tất cả</option>
+                    <option value="active" selected="@(Model.StatusFilter == "active")">Đang diễn ra</option>
+                    <option value="upcoming" selected="@(Model.StatusFilter == "upcoming")">Sắp diễn ra</option>
+                    <option value="ended" selected="@(Model.StatusFilter == "ended")">Đã kết thúc</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="search-input">
+                    <i class="fas fa-search"></i> Tìm kiếm:
+                </label>
+                <input type="text" id="search-input" name="q" class="filter-search" value="@Model.Query" placeholder="Tên chương trình / mã..." />
+            </div>
+
+            <button class="btn-reset-filter" id="resetFilterBtn" type="button">
+                <i class="fas fa-redo"></i> Đặt lại
+            </button>
+        </form>
+
+        @if (Model.Promotions == null || Model.Promotions.Count == 0)
+        {
+            <div class="empty-state" style="display:block;">
+                <div class="empty-state-icon">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <h3 class="empty-state-title">Không tìm thấy khuyến mãi</h3>
+                <p class="empty-state-text">Không có chương trình khuyến mãi nào phù hợp với bộ lọc của bạn.</p>
+                <a class="btn btn-primary" asp-controller="Promotion" asp-action="Index">
+                    <i class="fas fa-redo"></i> Đặt lại bộ lọc
+                </a>
+            </div>
+        }
+        else
+        {
+            <div class="promotions-grid" id="promotionsGrid">
+                @foreach (var p in Model.Promotions)
+                {
+                    <div class="promotion-card">
+                        <div class="promotion-image-wrapper">
+                            <img class="promotion-image" alt="Promotion" src="https://images.unsplash.com/photo-1556740758-90de374c12ad?w=800&h=600&fit=crop" />
+                            <div class="promotion-badge @p.BadgeClass">@p.BadgeText</div>
+                            <div class="promotion-status @p.StatusClass">@p.StatusText</div>
+                        </div>
+
+                        <div class="promotion-content">
+                            <div class="promotion-header">
+                                <h3 class="promotion-title">@p.Name</h3>
+                                <p class="promotion-desc">@p.Description</p>
+                            </div>
+
+                            <div class="promotion-discount">
+                                <div class="discount-badge">@p.DiscountBadge</div>
+                                <div class="discount-text">@p.DiscountText</div>
+                            </div>
+
+                            <div class="promotion-meta">
+                                <div class="promotion-meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>Thời gian: <strong>@p.DateRangeText</strong></span>
+                                </div>
+                                <div class="promotion-meta-item">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span>Đơn tối thiểu: <strong>@p.MinOrderValue.ToString("N0")đ</strong></span>
+                                </div>
+                                <div class="promotion-meta-item" style="@(string.IsNullOrWhiteSpace(p.Code) ? "display:none;" : "")">
+                                    <i class="fas fa-ticket-alt"></i>
+                                    <span>Mã: <strong class="promo-code">@p.Code</strong></span>
+                                </div>
+                            </div>
+
+                            <div class="promotion-actions">
+                                <button type="button" class="btn-promotion btn-view-details"
+                                        data-title="@p.Name"
+                                        data-desc="@p.Description"
+                                        data-code="@p.Code"
+                                        data-range="@p.DateRangeText"
+                                        onclick="openPromotionModal(this)">
+                                    <i class="fas fa-eye"></i> Chi tiết
+                                </button>
+                                <button type="button" class="btn-promotion btn-use-now" onclick="usePromotion('@p.Code')">
+                                    <i class="fas fa-bolt"></i> Dùng ngay
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Simple modal (no bootstrap dependency) -->
+<div class="promo-modal" id="promoModal" style="display:none;">
+    <div class="promo-modal-backdrop" onclick="closePromotionModal()"></div>
+    <div class="promo-modal-dialog" role="dialog" aria-modal="true">
+        <div class="promo-modal-header">
+            <div class="promo-modal-title" id="promoModalTitle">Chi tiết khuyến mãi</div>
+            <button class="promo-modal-close" type="button" onclick="closePromotionModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="promo-modal-body">
+            <div class="promo-modal-row">
+                <div class="promo-modal-label">Mã</div>
+                <div class="promo-modal-value" id="promoModalCode">--</div>
+            </div>
+            <div class="promo-modal-row">
+                <div class="promo-modal-label">Thời gian</div>
+                <div class="promo-modal-value" id="promoModalRange">--</div>
+            </div>
+            <div class="promo-modal-desc" id="promoModalDesc"></div>
+        </div>
+        <div class="promo-modal-actions">
+            <button class="btn btn-secondary" type="button" onclick="closePromotionModal()">Đóng</button>
+            <button class="btn btn-primary" type="button" onclick="copyPromotionCodeFromModal()">
+                <i class="fas fa-copy"></i> Copy mã
+            </button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/promotion-mvc.js"></script>
 }

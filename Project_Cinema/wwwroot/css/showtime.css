@@ -204,8 +204,14 @@
 
 .filter-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: var(--spacing-md);
+}
+
+@media (max-width: 1200px) {
+    .filter-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .filter-group {
@@ -457,6 +463,41 @@
     font-family: var(--font-family);
     position: relative;
     overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+}
+
+.time-slot-card.soldout {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+    border-style: dashed;
+}
+
+.slot-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 2;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    box-shadow: var(--shadow-xs);
+}
+
+.slot-badge-low {
+    background: rgba(245, 158, 11, 0.14);
+    border: 1px solid rgba(245, 158, 11, 0.32);
+    color: #b45309;
+}
+
+.slot-badge-soldout {
+    background: rgba(220, 38, 38, 0.14);
+    border: 1px solid rgba(220, 38, 38, 0.32);
+    color: #b91c1c;
 }
 
 .time-slot-card::before {

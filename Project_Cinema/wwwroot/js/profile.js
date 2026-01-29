@@ -2,12 +2,62 @@
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
+    const isServerMode = !!window.__profileData;
+    if (isServerMode) {
+        applyServerProfileData(window.__profileData);
+        initializeTabs();
+        activateTabFromUrlOrServer();
+        initializeForms();
+        initializeAvatarEdit();
+        return;
+    }
+
     initializeProfile();
     initializeTabs();
     initializeForms();
     initializeAvatarEdit();
     loadBookingHistory();
 });
+
+function activateTabFromUrlOrServer() {
+    const tabFromServer = window.__profileActiveTab;
+    const url = new URL(window.location.href);
+    const tabFromQuery = (url.searchParams.get('tab') || '').trim();
+    const hash = (window.location.hash || '').replace('#', '').trim();
+
+    const wanted = tabFromQuery || tabFromServer || (hash === 'booking-history' ? 'booking-history' : '');
+    if (!wanted) return;
+
+    const navItem = document.querySelector(`.nav-item[data-tab="${wanted}"]`);
+    if (navItem) {
+        navItem.click();
+    }
+}
+
+function applyServerProfileData(data) {
+    try {
+        if (data.fullName) {
+            const nameEl = document.getElementById('profileName');
+            if (nameEl) nameEl.textContent = data.fullName;
+
+            const fullNameInput = document.getElementById('fullName');
+            if (fullNameInput) fullNameInput.value = data.fullName;
+        }
+        if (data.email) {
+            const emailEl = document.getElementById('profileEmail');
+            if (emailEl) emailEl.textContent = data.email;
+
+            const emailInput = document.getElementById('email');
+            if (emailInput) emailInput.value = data.email;
+        }
+        if (data.avatarUrl) {
+            const avatar = document.getElementById('profileAvatar');
+            if (avatar) avatar.src = data.avatarUrl;
+        }
+    } catch (e) {
+        // noop
+    }
+}
 
 // Initialize profile
 function initializeProfile() {
@@ -39,6 +89,42 @@ function initializeProfile() {
     */
 }
 
+// Enhance UX on server-rendered profile page
+document.addEventListener('DOMContentLoaded', function () {
+    if (!window.__profileData) return;
+
+    const fullNameInput = document.getElementById('fullName');
+    const avatarUrlInput = document.getElementById('avatarUrl');
+    const avatar = document.getElementById('profileAvatar');
+    const nameEl = document.getElementById('profileName');
+
+    function getFallbackAvatarUrl() {
+        const name = (fullNameInput?.value || window.__profileData.fullName || 'User').trim();
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=e50914&color=fff&size=200`;
+    }
+
+    function refreshAvatarPreview() {
+        if (!avatar) return;
+        const custom = (avatarUrlInput?.value || '').trim();
+        avatar.src = custom ? custom : getFallbackAvatarUrl();
+    }
+
+    if (fullNameInput && nameEl) {
+        fullNameInput.addEventListener('input', () => {
+            const v = fullNameInput.value.trim();
+            nameEl.textContent = v || window.__profileData.fullName || '---';
+            // Only auto-change avatar when not using custom URL
+            const custom = (avatarUrlInput?.value || '').trim();
+            if (!custom) refreshAvatarPreview();
+        });
+    }
+
+    if (avatarUrlInput) {
+        avatarUrlInput.addEventListener('input', refreshAvatarPreview);
+        avatarUrlInput.addEventListener('change', refreshAvatarPreview);
+    }
+});
+
 // Initialize tabs
 function initializeTabs() {
     const navItems = document.querySelectorAll('.nav-item');
@@ -67,8 +153,11 @@ function initializeForms() {
     const personalInfoForm = document.getElementById('personalInfoForm');
     if (personalInfoForm) {
         personalInfoForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            handlePersonalInfoSave();
+            const isServer = personalInfoForm.dataset.serverProfile === 'true';
+            if (!isServer) {
+                e.preventDefault();
+                handlePersonalInfoSave();
+            }
         });
     }
     
@@ -76,6 +165,30 @@ function initializeForms() {
     const securityForm = document.getElementById('securityForm');
     if (securityForm) {
         securityForm.addEventListener('submit', function(e) {
+            const isServer = securityForm.dataset.serverSecurity === 'true';
+            if (isServer) {
+                // minimal client validation
+                const currentPassword = document.getElementById('currentPassword')?.value || '';
+                const newPassword = document.getElementById('newPassword')?.value || '';
+                const confirmNewPassword = document.getElementById('confirmNewPassword')?.value || '';
+                if (!currentPassword.trim() || !newPassword.trim() || !confirmNewPassword.trim()) {
+                    e.preventDefault();
+                    showAlert('Vui lòng nhập đầy đủ thông tin đổi mật khẩu.', 'error');
+                    return;
+                }
+                if (newPassword.length < 6) {
+                    e.preventDefault();
+                    showAlert('Mật khẩu mới phải có ít nhất 6 ký tự.', 'error');
+                    return;
+                }
+                if (newPassword !== confirmNewPassword) {
+                    e.preventDefault();
+                    showAlert('Mật khẩu xác nhận không khớp.', 'error');
+                    return;
+                }
+                return; // allow submit
+            }
+
             e.preventDefault();
             handlePasswordChange();
         });
@@ -304,10 +417,18 @@ function loadBookingHistory() {
 }
 
 // View booking details
-function viewBookingDetails(bookingCode) {
-    // In real app, this would open a modal or navigate to details page
-    alert(`Xem chi tiết đặt vé: ${bookingCode}`);
-    // window.location.href = `booking-details.html?code=${bookingCode}`;
+function viewBookingDetails(bookingIdOrCode) {
+    // Server mode: navigate to ticket page
+    if (window.__profileRoutes && window.__profileRoutes.ticketBaseUrl) {
+        const bookingId = String(bookingIdOrCode || '').trim();
+        if (bookingId) {
+            window.location.href = `${window.__profileRoutes.ticketBaseUrl}?bookingId=${encodeURIComponent(bookingId)}`;
+            return;
+        }
+    }
+
+    // Fallback: alert
+    alert(`Xem chi tiết đặt vé: ${bookingIdOrCode}`);
 }
 
 // Download ticket
@@ -320,9 +441,15 @@ function downloadTicket(bookingCode) {
     }, 1500);
 }
 
+function showQr(bookingCode) {
+    if (!bookingCode) return;
+    showAlert(`QR (mock): ${bookingCode} (hãy dùng trang Chi tiết để xem QR)`, 'info');
+}
+
 // Show alert message
 function showAlert(message, type = 'info') {
     const alertElement = document.getElementById('profileAlert');
+    if (!alertElement) return;
     const alertIcon = alertElement.querySelector('.alert-icon');
     const alertText = alertElement.querySelector('.alert-text');
     

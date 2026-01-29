@@ -1,8 +1,13 @@
 @using System.Text.Json
-@model Project_Cinema.ViewModels.BookingSuccessViewModel
+@model Project_Cinema.ViewModels.TicketDetailsViewModel
 
 @{
-    ViewData["Title"] = "Đặt vé thành công";
+    ViewData["Title"] = "Chi tiết vé";
+
+    var statusTitle = Model.IsPaid ? "Vé hợp lệ" : "Vé không còn hiệu lực";
+    var statusMessage = Model.IsPaid
+        ? "Vé của bạn đã được xác nhận. Vui lòng xuất trình mã/QR khi đến rạp."
+        : (Model.IsCancelled ? "Vé đã bị hủy. Nếu bạn muốn xem phim, hãy đặt lại vé." : "Vé đã hết hạn. Vui lòng đặt lại vé để tiếp tục.");
 
     var jsPayload = JsonSerializer.Serialize(new
     {
@@ -30,21 +35,20 @@
     window.__bookingSuccessData = @Html.Raw(jsPayload);
 </script>
 
-<!-- Success Section -->
 <section class="success-section">
     <div class="container">
         <div class="success-content">
             <div class="success-icon-wrapper">
-                <div class="success-icon">
-                    <i class="fas fa-check"></i>
+                <div class="success-icon" style="@(Model.IsPaid ? "" : "background: linear-gradient(135deg, #0f172a 0%, #334155 100%);")">
+                    <i class="fas @(Model.IsPaid ? "fa-check" : "fa-exclamation")"></i>
                 </div>
                 <div class="success-ripple"></div>
                 <div class="success-ripple"></div>
                 <div class="success-ripple"></div>
             </div>
 
-            <h1 class="success-title">Đặt vé thành công!</h1>
-            <p class="success-message">Cảm ơn bạn đã đặt vé. Thông tin vé đã được gửi đến email của bạn.</p>
+            <h1 class="success-title">@statusTitle</h1>
+            <p class="success-message">@statusMessage</p>
 
             <div class="booking-code-card">
                 <div class="booking-code-label">
@@ -56,12 +60,12 @@
                 </button>
             </div>
 
-            <div class="notification-banner">
+            <div class="notification-banner" style="@(string.IsNullOrWhiteSpace(Model.CustomerEmail) ? "display:none;" : "")">
                 <div class="notification-icon">
                     <i class="fas fa-envelope"></i>
                 </div>
                 <div class="notification-content">
-                    <strong>Vé đã được gửi qua email</strong>
+                    <strong>Email</strong>
                     <span id="customerEmail">@Model.CustomerEmail</span>
                 </div>
             </div>
@@ -69,7 +73,6 @@
     </div>
 </section>
 
-<!-- Ticket Details Section -->
 <section class="ticket-details-section">
     <div class="container">
         <div class="ticket-details-layout">
@@ -168,13 +171,15 @@
 
                 <div class="important-notes">
                     <h3 class="notes-title">
-                        <i class="fas fa-exclamation-triangle"></i> Lưu ý quan trọng
+                        <i class="fas fa-exclamation-triangle"></i> Lưu ý
                     </h3>
                     <ul class="notes-list">
-                        <li><i class="fas fa-check-circle"></i> Vui lòng đến rạp <strong>trước 15 phút</strong> so với giờ chiếu để đổi vé</li>
-                        <li><i class="fas fa-check-circle"></i> Mang theo <strong>CMND/CCCD</strong> hoặc email xác nhận khi đến rạp</li>
-                        <li><i class="fas fa-check-circle"></i> Vé đã đặt <strong>không thể hoàn trả</strong>, chỉ có thể đổi suất chiếu (theo quy định)</li>
-                        <li><i class="fas fa-check-circle"></i> Mọi thắc mắc vui lòng liên hệ <strong>Hotline: 1900 1234</strong></li>
+                        <li><i class="fas fa-check-circle"></i> Vui lòng đến rạp <strong>trước 15 phút</strong> so với giờ chiếu.</li>
+                        <li><i class="fas fa-check-circle"></i> Mang theo <strong>mã đặt vé</strong> hoặc <strong>QR</strong> khi đến rạp.</li>
+                        @if (!Model.IsPaid)
+                        {
+                            <li><i class="fas fa-check-circle"></i> Vé hiện tại <strong>không còn hiệu lực</strong>. Bạn có thể đặt lại vé để tiếp tục.</li>
+                        }
                     </ul>
                 </div>
             </div>
@@ -185,18 +190,28 @@
                         <i class="fas fa-bolt"></i> Thao tác nhanh
                     </h3>
                     <div class="action-buttons">
-                        <button class="btn-action-primary" onclick="downloadTicket()">
-                            <i class="fas fa-download"></i>
-                            <span>Tải vé PDF</span>
-                        </button>
-                        <button class="btn-action-secondary" onclick="sendEmail()">
-                            <i class="fas fa-envelope"></i>
-                            <span>Gửi lại email</span>
-                        </button>
-                        <button class="btn-action-secondary" onclick="shareTicket()">
-                            <i class="fas fa-share-alt"></i>
-                            <span>Chia sẻ</span>
-                        </button>
+                        @if (Model.IsPaid)
+                        {
+                            <button class="btn-action-primary" onclick="downloadTicket()">
+                                <i class="fas fa-download"></i>
+                                <span>Tải vé PDF</span>
+                            </button>
+                            <button class="btn-action-secondary" onclick="shareTicket()">
+                                <i class="fas fa-share-alt"></i>
+                                <span>Chia sẻ</span>
+                            </button>
+                        }
+                        else
+                        {
+                            <a class="btn-action-primary" asp-controller="Showtime" asp-action="Index">
+                                <i class="fas fa-ticket-alt"></i>
+                                <span>Đặt lại vé</span>
+                            </a>
+                            <a class="btn-action-secondary" asp-controller="Account" asp-action="Profile" asp-route-tab="booking-history" asp-route-status="all" asp-fragment="booking-history">
+                                <i class="fas fa-arrow-left"></i>
+                                <span>Về danh sách vé</span>
+                            </a>
+                        }
                     </div>
                 </div>
 
@@ -219,17 +234,7 @@
                                 <span>1900 1234</span>
                             </div>
                         </div>
-                        <div class="cinema-info-item">
-                            <i class="fas fa-clock"></i>
-                            <div>
-                                <strong>Giờ mở cửa</strong>
-                                <span>8:00 - 23:00 hàng ngày</span>
-                            </div>
-                        </div>
                     </div>
-                    <a href="#" class="btn-view-map">
-                        <i class="fas fa-map"></i> Xem bản đồ
-                    </a>
                 </div>
 
                 <div class="support-card">
@@ -255,11 +260,11 @@
 <section class="success-actions-section">
     <div class="container">
         <div class="success-actions">
-            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary btn-large">
-                <i class="fas fa-home"></i> Về trang chủ
+            <a asp-controller="Account" asp-action="Profile" asp-route-tab="booking-history" asp-route-status="all" asp-fragment="booking-history" class="btn btn-secondary btn-large">
+                <i class="fas fa-arrow-left"></i> Về vé của tôi
             </a>
-            <a asp-controller="Movie" asp-action="Index" class="btn btn-outline btn-large">
-                <i class="fas fa-film"></i> Xem thêm phim
+            <a asp-controller="Showtime" asp-action="Index" class="btn btn-outline btn-large">
+                <i class="fas fa-film"></i> Xem lịch chiếu
             </a>
         </div>
     </div>

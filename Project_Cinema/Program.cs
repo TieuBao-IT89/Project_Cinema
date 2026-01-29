@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.DataProtection;
 using Project_Cinema.Models;
 using Project_Cinema.Repository;
+using Project_Cinema.Services.Email;
+using Project_Cinema.Services.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,9 @@ builder.Services.AddDbContext<DataContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IPasswordHasher<UserModel>, PasswordHasher<UserModel>>();
+builder.Services.AddDataProtection();
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<PasswordResetRateLimiter>();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
@@ -27,6 +33,13 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.AccessDeniedPath = "/Account/Login";
         options.Cookie.Name = "CinemaAuth";
     });
+
+// Email sender (SMTP) + background queue
+builder.Services.Configure<EmailSenderOptions>(builder.Configuration.GetSection("Email"));
+builder.Services.AddSingleton<IEmailSender, EmailSender>();
+builder.Services.AddSingleton<EmailQueue>();
+builder.Services.AddSingleton<IEmailQueue>(sp => sp.GetRequiredService<EmailQueue>());
+builder.Services.AddHostedService<EmailQueueHostedService>();
 
 var app = builder.Build();
 

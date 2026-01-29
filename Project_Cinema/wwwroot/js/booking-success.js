@@ -2,9 +2,58 @@
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
+    // Prefer server-rendered data (ASP.NET MVC)
+    if (window.__bookingSuccessData) {
+        applyServerData(window.__bookingSuccessData);
+        return;
+    }
+
+    // Fallback to old demo behavior (sessionStorage)
     loadBookingData();
     generateBookingCode();
 });
+
+function applyServerData(data) {
+    try {
+        if (data.bookingCode) {
+            document.getElementById('bookingCode').textContent = data.bookingCode;
+        }
+        if (data.customerEmail) {
+            document.getElementById('customerEmail').textContent = data.customerEmail;
+        }
+        if (data.movie) document.getElementById('ticketMovie').textContent = data.movie;
+        if (data.cinema) document.getElementById('ticketCinema').textContent = data.cinema;
+        if (data.room) document.getElementById('ticketRoom').textContent = data.room;
+        if (data.date) document.getElementById('ticketDate').textContent = data.date;
+        if (data.time) document.getElementById('ticketTime').textContent = data.time;
+        if (data.customerName) document.getElementById('ticketCustomer').textContent = data.customerName;
+        if (data.totalPrice) document.getElementById('ticketPrice').textContent = data.totalPrice;
+
+        if (Array.isArray(data.seats)) {
+            const seatsContainer = document.getElementById('ticketSeats');
+            if (seatsContainer) {
+                seatsContainer.innerHTML = '';
+                data.seats.forEach(seat => {
+                    const badge = document.createElement('span');
+                    badge.className = 'ticket-seat-badge';
+                    badge.textContent = seat;
+                    seatsContainer.appendChild(badge);
+                });
+            }
+        }
+
+        if (data.cinema) {
+            const cinemaName = document.getElementById('cinemaName');
+            if (cinemaName) cinemaName.textContent = data.cinema;
+        }
+        if (data.cinemaAddress) {
+            const cinemaAddress = document.getElementById('cinemaAddress');
+            if (cinemaAddress) cinemaAddress.textContent = data.cinemaAddress;
+        }
+    } catch (e) {
+        // noop
+    }
+}
 
 // Load booking data from sessionStorage
 function loadBookingData() {
@@ -96,6 +145,12 @@ function updateTicketInfo(ticketInfo, fullData) {
 
 // Generate booking code
 function generateBookingCode() {
+    // In server version we already have booking code
+    if (window.__bookingSuccessData && window.__bookingSuccessData.bookingCode) {
+        document.getElementById('bookingCode').textContent = window.__bookingSuccessData.bookingCode;
+        return;
+    }
+
     const timestamp = Date.now();
     const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
     const date = new Date();

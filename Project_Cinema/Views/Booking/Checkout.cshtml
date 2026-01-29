@@ -2,54 +2,185 @@
     ViewData["Title"] = "Tạm giữ ghế";
     var code = ViewData["BookingCode"] as string ?? "--";
     var seats = ViewData["Seats"] as string ?? "--";
+    var seatCodes = ViewData["SeatCodes"] as List<string> ?? new List<string>();
+    var seatCount = (int?)ViewData["SeatCount"] ?? seatCodes.Count;
     var expiresAt = ViewData["BookingExpiresAt"] as DateTime?;
     var total = (decimal?)ViewData["BookingTotal"] ?? 0m;
+    var seatsSubtotal = (decimal?)ViewData["SeatsSubtotal"] ?? total;
     var isExpired = (bool?)ViewData["IsExpired"] ?? false;
     var bookingId = (long?)ViewData["BookingId"] ?? 0;
     var showtimeId = (long?)ViewData["ShowtimeId"] ?? 0;
+
+    var movieTitle = ViewData["MovieTitle"] as string ?? "";
+    var cinemaName = ViewData["CinemaName"] as string ?? "";
+    var cinemaAddress = ViewData["CinemaAddress"] as string ?? "";
+    var roomName = ViewData["RoomName"] as string ?? "";
+    var startsAt = ViewData["StartsAt"] as DateTime?;
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/booking-checkout.css" />
 }
 
-<main class="container booking-page">
-    <div class="card booking-card">
-        <div class="card-header">
-            <h2>Tạm giữ ghế</h2>
-            <p class="sub">Mã đặt vé: <strong>@code</strong></p>
+<main class="booking-checkout">
+    <div class="container">
+        <div class="checkout-hero">
+            <div class="hero-left">
+                <div class="hero-badges">
+                    <span class="hero-badge">
+                        <i class="fas fa-clock"></i> Tạm giữ ghế
+                    </span>
+                    <span class="hero-badge hero-badge-soft">
+                        <i class="fas fa-ticket-alt"></i> @code
+                    </span>
+                </div>
+                <h1 class="hero-title">Giữ chỗ thành công</h1>
+                <p class="hero-subtitle">
+                    Ghế của bạn đang được giữ <strong>10 phút</strong>. Hoàn tất thanh toán để phát hành vé.
+                </p>
+            </div>
+
+            <div class="hero-right">
+                <div class="countdown-card">
+                    <div class="countdown-label">Thời gian còn lại</div>
+                    <div class="countdown-value" id="expiresCountdown">--:--</div>
+                    <div class="countdown-meta">
+                        <span class="countdown-dot"></span>
+                        <span id="expiresAt" class="expires-iso">@((expiresAt?.ToString("yyyy-MM-ddTHH:mm:ss")) ?? "")</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         @if (isExpired)
         {
-            <div class="alert alert-danger">
-                Booking đã hết hạn. Vui lòng quay lại chọn ghế.
+            <div class="checkout-alert checkout-alert-danger">
+                <div class="alert-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                <div class="alert-body">
+                    <div class="alert-title">Booking đã hết hạn</div>
+                    <div class="alert-text">Vui lòng quay lại chọn ghế để tiếp tục đặt vé.</div>
+                </div>
+                <div class="alert-actions">
+                    <a class="btn btn-secondary" asp-controller="Seat" asp-action="Index" asp-route-showtimeId="@showtimeId">
+                        <i class="fas fa-arrow-left"></i> Quay lại chọn ghế
+                    </a>
+                </div>
             </div>
         }
         else
         {
-            <div class="booking-body">
-                <div class="kv">
-                    <span>Ghế</span>
-                    <strong>@seats</strong>
-                </div>
-                <div class="kv">
-                    <span>Tổng tiền</span>
-                    <strong>@total.ToString("N0")đ</strong>
-                </div>
-                <div class="kv">
-                    <span>Hết hạn lúc</span>
-                    <strong id="expiresAt">@((expiresAt?.ToString("yyyy-MM-ddTHH:mm:ss")) ?? "")</strong>
-                </div>
+            <div class="checkout-grid">
+                <section class="checkout-card ticket-preview">
+                    <div class="card-head">
+                        <div class="card-title">
+                            <i class="fas fa-receipt"></i> Thông tin vé
+                        </div>
+                        <div class="card-subtitle">
+                            Kiểm tra lại thông tin trước khi thanh toán.
+                        </div>
+                    </div>
 
-                <div class="help">
-                    Ghế đang được giữ trong 10 phút. Hãy thanh toán để hoàn tất đặt vé.
-                </div>
+                    <div class="card-body">
+                        <div class="info-list">
+                            <div class="info-row">
+                                <div class="info-label"><i class="fas fa-film"></i> Phim</div>
+                                <div class="info-value">@(!string.IsNullOrWhiteSpace(movieTitle) ? movieTitle : "--")</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label"><i class="fas fa-building"></i> Rạp</div>
+                                <div class="info-value">
+                                    @(!string.IsNullOrWhiteSpace(cinemaName) ? cinemaName : "--")
+                                    @if (!string.IsNullOrWhiteSpace(cinemaAddress))
+                                    {
+                                        <div class="info-note">@cinemaAddress</div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label"><i class="fas fa-door-open"></i> Phòng</div>
+                                <div class="info-value">@(!string.IsNullOrWhiteSpace(roomName) ? roomName : "--")</div>
+                            </div>
+                            <div class="info-row info-row-split">
+                                <div>
+                                    <div class="info-label"><i class="fas fa-calendar"></i> Ngày</div>
+                                    <div class="info-value">@((startsAt?.ToString("dd/MM/yyyy")) ?? "--")</div>
+                                </div>
+                                <div>
+                                    <div class="info-label"><i class="fas fa-clock"></i> Giờ</div>
+                                    <div class="info-value">@((startsAt?.ToString("HH:mm")) ?? "--")</div>
+                                </div>
+                            </div>
+                        </div>
 
-                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
-                    <a class="btn btn-secondary" asp-controller="Seat" asp-action="Index" asp-route-showtimeId="@showtimeId">Quay lại</a>
-                    <a class="btn btn-primary" asp-controller="Payment" asp-action="Index" asp-route-bookingId="@bookingId">Thanh toán</a>
-                </div>
+                        <div class="seat-block">
+                            <div class="seat-block-head">
+                                <div class="seat-block-title"><i class="fas fa-chair"></i> Ghế đã chọn</div>
+                                <div class="seat-block-meta">@seatCount ghế</div>
+                            </div>
+                            <div class="seat-chips" aria-label="Danh sách ghế">
+                                @if (seatCodes.Count > 0)
+                                {
+                                    foreach (var s in seatCodes)
+                                    {
+                                        <span class="seat-chip">@s</span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="seat-chip seat-chip-muted">@seats</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <aside class="checkout-card checkout-summary">
+                    <div class="card-head">
+                        <div class="card-title">
+                            <i class="fas fa-credit-card"></i> Tóm tắt thanh toán
+                        </div>
+                        <div class="card-subtitle">Thanh toán nhanh để tránh hết thời gian giữ.</div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="summary-rows">
+                            <div class="summary-row">
+                                <span>Tạm tính</span>
+                                <strong>@seatsSubtotal.ToString("N0")đ</strong>
+                            </div>
+                            <div class="summary-row">
+                                <span>Phí dịch vụ</span>
+                                <strong>0đ</strong>
+                            </div>
+                            <div class="summary-divider"></div>
+                            <div class="summary-row summary-row-total">
+                                <span>Tổng tiền</span>
+                                <strong>@total.ToString("N0")đ</strong>
+                            </div>
+                        </div>
+
+                        <div class="hold-note">
+                            <i class="fas fa-shield-alt"></i>
+                            <div>
+                                Ghế đang được giữ cho bạn. Nếu quá thời gian, ghế sẽ tự động được giải phóng.
+                            </div>
+                        </div>
+
+                        <div class="summary-actions">
+                            <form asp-controller="Booking" asp-action="CancelHold" method="post">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="bookingId" value="@bookingId" />
+                                <input type="hidden" name="showtimeId" value="@showtimeId" />
+                                <button type="submit" class="btn btn-secondary btn-block">
+                                    <i class="fas fa-arrow-left"></i> Chọn lại ghế
+                                </button>
+                            </form>
+                            <a class="btn btn-primary btn-block" asp-controller="Payment" asp-action="Index" asp-route-bookingId="@bookingId">
+                                <i class="fas fa-lock"></i> Thanh toán ngay
+                            </a>
+                        </div>
+                    </div>
+                </aside>
             </div>
         }
     </div>

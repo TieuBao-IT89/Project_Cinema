@@ -5,11 +5,41 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeForgotPasswordForm();
 });
 
+function startCooldown(seconds) {
+    const submitBtn = document.getElementById('forgotPasswordSubmitBtn');
+    const resendCountdown = document.getElementById('resendCountdown');
+    if (!submitBtn || !seconds || seconds <= 0) return;
+
+    let remaining = seconds;
+    submitBtn.disabled = true;
+
+    function tick() {
+        if (remaining <= 0) {
+            submitBtn.disabled = false;
+            if (resendCountdown) resendCountdown.textContent = '';
+            return;
+        }
+        if (resendCountdown) resendCountdown.textContent = `(thử lại sau ${remaining}s)`;
+        remaining -= 1;
+        setTimeout(tick, 1000);
+    }
+    tick();
+}
+
 // Initialize forgot password form
 function initializeForgotPasswordForm() {
     const form = document.getElementById('forgotPasswordForm');
     const identifierInput = document.getElementById('forgotPasswordIdentifier');
+    const submitBtn = document.getElementById('forgotPasswordSubmitBtn');
     
+    // Server-provided cooldown (rate limit)
+    if (submitBtn) {
+        const cd = parseInt(submitBtn.getAttribute('data-cooldown') || '0', 10);
+        if (!Number.isNaN(cd) && cd > 0) {
+            startCooldown(cd);
+        }
+    }
+
     // Real-time validation
     identifierInput.addEventListener('input', function() {
         validateIdentifier(this.value, false);
@@ -21,6 +51,20 @@ function initializeForgotPasswordForm() {
     
     // Form submission
     form.addEventListener('submit', function(e) {
+        const isServer = form.dataset.serverForgot === 'true';
+        const identifier = identifierInput.value.trim();
+        const isValid = validateIdentifier(identifier, true);
+        if (!isValid) {
+            e.preventDefault();
+            showAlert('Vui lòng kiểm tra lại thông tin đã nhập', 'error');
+            return;
+        }
+
+        // Server mode: allow form submit to backend
+        if (isServer) {
+            return;
+        }
+
         e.preventDefault();
         handleForgotPassword();
     });

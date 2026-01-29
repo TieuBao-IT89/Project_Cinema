@@ -2,8 +2,8 @@
 
 @{
     ViewData["Title"] = "Chọn lịch chiếu";
-    var selectedDate = Model.SelectedDate?.ToString("yyyy-MM-dd") ?? DateTime.Today.ToString("yyyy-MM-dd");
-    var selectedDateText = Model.SelectedDate?.ToString("dd/MM/yyyy") ?? DateTime.Today.ToString("dd/MM/yyyy");
+    var selectedDate = Model.SelectedDate.ToString("yyyy-MM-dd");
+    var selectedDateText = Model.SelectedDate.ToString("dd/MM/yyyy");
     var posterUrl = string.IsNullOrWhiteSpace(Model.Movie?.PosterUrl)
         ? "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=400"
         : Model.Movie!.PosterUrl;
@@ -73,10 +73,10 @@
                 <img src="@posterUrl" alt="@Model.Movie?.Title">
             </div>
             <div class="movie-info-small">
-                <h2 class="movie-title-small">@Model.Movie?.Title</h2>
+                <h2 class="movie-title-small">@((Model.Movie?.Title) ?? "Chọn phim")</h2>
                 <div class="movie-meta-small">
                     <span class="meta-badge">
-                        <i class="fas fa-clock"></i> @Model.Movie?.DurationMin phút
+                        <i class="fas fa-clock"></i> @((Model.Movie?.DurationMin) ?? 0) phút
                     </span>
                     <span class="meta-badge">
                         <i class="fas fa-user-friends"></i> @Model.Movie?.AgeRating
@@ -84,9 +84,12 @@
                 </div>
             </div>
             <div class="change-movie">
-                <a asp-controller="Movie" asp-action="Details" asp-route-id="@Model.Movie?.MovieId" class="btn btn-secondary">
-                    <i class="fas fa-edit"></i> Đổi phim
-                </a>
+                @if (Model.Movie?.MovieId != null)
+                {
+                    <a asp-controller="Movie" asp-action="Details" asp-route-id="@Model.Movie.MovieId" class="btn btn-secondary">
+                        <i class="fas fa-edit"></i> Chi tiết phim
+                    </a>
+                }
             </div>
         </div>
     </div>
@@ -103,14 +106,33 @@
                         <i class="fas fa-filter"></i> Lọc theo
                     </h3>
                     <form id="showtimeFilterForm" method="get" class="filter-grid">
-                        <input type="hidden" name="movieId" value="@Model.Movie?.MovieId" />
+                        <div class="filter-group">
+                            <label for="movie-filter">
+                                <i class="fas fa-film"></i> Chọn phim
+                            </label>
+                            <select id="movie-filter" name="movieId" class="filter-select">
+                                @if (Model.Movies.Count == 0)
+                                {
+                                    <option value="" selected>Chưa có phim</option>
+                                }
+                                else
+                                {
+                                    foreach (var m in Model.Movies)
+                                    {
+                                        <option value="@m.MovieId" selected="@(Model.SelectedMovieId == m.MovieId)">
+                                            @m.Title
+                                        </option>
+                                    }
+                                }
+                            </select>
+                        </div>
                         <div class="filter-group">
                             <label for="cinema-filter">
                                 <i class="fas fa-building"></i> Chọn rạp
                             </label>
                             <select id="cinema-filter" name="cinemaId" class="filter-select">
                                 <option value="">Tất cả rạp</option>
-                                @foreach (var cinema in Model.Cinemas)
+                                @foreach (var cinema in Model.CinemaOptions)
                                 {
                                     <option value="@cinema.CinemaId" selected="@(Model.SelectedCinemaId == cinema.CinemaId)">
                                         @cinema.CinemaName
@@ -186,20 +208,43 @@
                                         {
                                             <div class="format-group-card">
                                                 <div class="format-header">
-                                                    <span class="format-name">@room.RoomType</span>
+                                                    <span class="format-name">
+                                                        @room.RoomName
+                                                        <span style="opacity:.7;font-weight:700;">(@room.RoomType)</span>
+                                                    </span>
                                                     <span class="format-price">Từ @room.Showtimes.Min(slot => slot.BasePrice).ToString("N0")đ</span>
                                                 </div>
                                                 <div class="time-slots-card">
                                                     @foreach (var slot in room.Showtimes)
                                                     {
-                                                        <button class="time-slot-card available"
-                                                                data-showtime-id="@slot.ShowtimeId"
-                                                                data-time="@slot.StartsAt.ToString("HH:mm")"
-                                                                data-price="@slot.BasePrice"
-                                                                onclick="selectShowtime(this)">
-                                                            <span class="time-value">@slot.StartsAt.ToString("HH:mm")</span>
-                                                            <span class="price-value">@slot.BasePrice.ToString("N0")đ</span>
-                                                        </button>
+                                                        if (slot.AvailabilityClass == "soldout")
+                                                        {
+                                                            <span class="time-slot-card soldout"
+                                                                  data-showtime-id="@slot.ShowtimeId"
+                                                                  data-time="@slot.StartsAt.ToString("HH:mm")"
+                                                                  data-price="@slot.BasePrice">
+                                                                <span class="slot-badge slot-badge-soldout">Hết chỗ</span>
+                                                                <span class="time-value">@slot.StartsAt.ToString("HH:mm")</span>
+                                                                <span class="price-value">@slot.BasePrice.ToString("N0")đ</span>
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a class="time-slot-card available"
+                                                               href="/Seat/Index?showtimeId=@slot.ShowtimeId"
+                                                               data-showtime-id="@slot.ShowtimeId"
+                                                               data-time="@slot.StartsAt.ToString("HH:mm")"
+                                                               data-price="@slot.BasePrice"
+                                                               data-availability="@slot.AvailabilityClass"
+                                                               onclick="return pickShowtimeAndGo(this);">
+                                                                @if (slot.AvailabilityClass == "low")
+                                                                {
+                                                                    <span class="slot-badge slot-badge-low">Ít chỗ</span>
+                                                                }
+                                                                <span class="time-value">@slot.StartsAt.ToString("HH:mm")</span>
+                                                                <span class="price-value">@slot.BasePrice.ToString("N0")đ</span>
+                                                            </a>
+                                                        }
                                                     }
                                                 </div>
                                             </div>
@@ -236,7 +281,7 @@
                             <span class="summary-value" id="summary-time">--</span>
                         </div>
                         <div class="summary-item">
-                            <span class="summary-label">Định dạng:</span>
+                            <span class="summary-label">Phòng:</span>
                             <span class="summary-value" id="summary-format">--</span>
                         </div>
                         <div class="summary-divider"></div>
