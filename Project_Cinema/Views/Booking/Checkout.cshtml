@@ -1,0 +1,61 @@
+@{
+    ViewData["Title"] = "Tạm giữ ghế";
+    var code = ViewData["BookingCode"] as string ?? "--";
+    var seats = ViewData["Seats"] as string ?? "--";
+    var expiresAt = ViewData["BookingExpiresAt"] as DateTime?;
+    var total = (decimal?)ViewData["BookingTotal"] ?? 0m;
+    var isExpired = (bool?)ViewData["IsExpired"] ?? false;
+    var bookingId = (long?)ViewData["BookingId"] ?? 0;
+    var showtimeId = (long?)ViewData["ShowtimeId"] ?? 0;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/booking-checkout.css" />
+}
+
+<main class="container booking-page">
+    <div class="card booking-card">
+        <div class="card-header">
+            <h2>Tạm giữ ghế</h2>
+            <p class="sub">Mã đặt vé: <strong>@code</strong></p>
+        </div>
+
+        @if (isExpired)
+        {
+            <div class="alert alert-danger">
+                Booking đã hết hạn. Vui lòng quay lại chọn ghế.
+            </div>
+        }
+        else
+        {
+            <div class="booking-body">
+                <div class="kv">
+                    <span>Ghế</span>
+                    <strong>@seats</strong>
+                </div>
+                <div class="kv">
+                    <span>Tổng tiền</span>
+                    <strong>@total.ToString("N0")đ</strong>
+                </div>
+                <div class="kv">
+                    <span>Hết hạn lúc</span>
+                    <strong id="expiresAt">@((expiresAt?.ToString("yyyy-MM-ddTHH:mm:ss")) ?? "")</strong>
+                </div>
+
+                <div class="help">
+                    Ghế đang được giữ trong 10 phút. Hãy thanh toán để hoàn tất đặt vé.
+                </div>
+
+                <div style="display:flex;justify-content:flex-end;gap:10px;margin-top:12px;">
+                    <a class="btn btn-secondary" asp-controller="Seat" asp-action="Index" asp-route-showtimeId="@showtimeId">Quay lại</a>
+                    <a class="btn btn-primary" asp-controller="Payment" asp-action="Index" asp-route-bookingId="@bookingId">Thanh toán</a>
+                </div>
+            </div>
+        }
+    </div>
+</main>
+
+@section Scripts {
+    <script src="~/js/booking-checkout.js"></script>
+}
+

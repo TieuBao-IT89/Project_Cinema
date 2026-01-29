@@ -37,7 +37,7 @@ namespace Project_Cinema.Models
         public string Status { get; set; } = null!;
 
         [Required]
-        [Column("CREATE_AT")]
+        [Column("CREATED_AT")]
         public DateTime CreatedAt { get; set; }
     }
 }

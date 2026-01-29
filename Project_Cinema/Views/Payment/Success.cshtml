@@ -1,1 +1,52 @@
-﻿
+@model Project_Cinema.Models.BookingModel
+
+@{
+    ViewData["Title"] = "Thanh toán thành công";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/booking.css" />
+}
+
+<section class="payment-main">
+    <div class="container">
+        <div class="payment-layout">
+            <div class="payment-content">
+                <div class="payment-status-section" style="display:block;">
+                    <div class="payment-status success">
+                        <div class="status-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="status-content">
+                            <h3 class="status-title">Thanh toán thành công</h3>
+                            <p class="status-message">Mã đặt vé: <strong>@(Model.BookingCode ?? $"BK-{Model.BookingId}")</strong></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-summary-section" style="margin-top:18px;">
+                    <div class="order-summary-compact-card">
+                        <div class="order-summary-compact-item">
+                            <i class="fas fa-receipt"></i>
+                            <div class="order-summary-compact-content">
+                                <span class="order-summary-label">Tổng tiền</span>
+                                <span class="order-summary-value">@Model.TotalAmount.ToString("N0")đ</span>
+                            </div>
+                        </div>
+                        <div class="customer-info-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Mock payment: đã chuyển booking sang trạng thái <strong>paid</strong>.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons-wrapper-payment" style="margin-top:18px;display:flex;gap:12px;justify-content:flex-start;">
+                    <a class="btn btn-secondary btn-action-payment" asp-controller="Home" asp-action="Index">
+                        <i class="fas fa-home"></i> Về trang chủ
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+

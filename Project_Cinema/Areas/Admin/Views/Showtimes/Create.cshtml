@@ -17,6 +17,7 @@
         <div class="table-card">
             <form method="post">
                 @Html.AntiForgeryToken()
+                <div class="text-danger" asp-validation-summary="All"></div>
                 <div class="form-grid">
                     <div class="form-section-card">
                         <div class="form-card-header">
@@ -45,10 +46,12 @@
                             <div class="col-md-6">
                                 <label class="form-label">Bắt đầu</label>
                                 <input asp-for="Showtime.StartsAt" type="datetime-local" class="form-control" />
+                                <span class="text-danger" asp-validation-for="Showtime.StartsAt"></span>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">Kết thúc</label>
                                 <input asp-for="Showtime.EndsAt" type="datetime-local" class="form-control" />
+                                <span class="text-danger" asp-validation-for="Showtime.EndsAt"></span>
                             </div>
                         </div>
                     </div>
@@ -61,6 +64,7 @@
                             <div class="col-12">
                                 <label class="form-label">Giá vé</label>
                                 <input asp-for="Showtime.BasePrice" class="form-control" placeholder="120000" />
+                                <span class="text-danger" asp-validation-for="Showtime.BasePrice"></span>
                             </div>
                             <div class="col-12">
                                 <label class="form-label">Trạng thái</label>
@@ -68,6 +72,7 @@
                                     <option value="scheduled">Đang mở</option>
                                     <option value="cancelled">Hủy</option>
                                 </select>
+                                <span class="text-danger" asp-validation-for="Showtime.Status"></span>
                             </div>
                         </div>
                         <div class="form-help">Gợi ý: mở suất trước 7-14 ngày để bán vé.</div>

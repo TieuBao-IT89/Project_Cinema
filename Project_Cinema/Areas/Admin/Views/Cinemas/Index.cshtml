@@ -62,7 +62,7 @@
                                     <td>@cinema.Address</td>
                                     <td>@(cinema.City ?? "--")</td>
                                     <td>@(cinema.Phone ?? "--")</td>
-                                    <td>@cinema.Status</td>
+                                    <td><span class="status-pill">@cinema.Status</span></td>
                                     <td>
                                         <a asp-area="Admin" asp-controller="Cinemas" asp-action="Edit" asp-route-id="@cinema.CinemaId"
                                            class="btn btn-secondary btn-sm">

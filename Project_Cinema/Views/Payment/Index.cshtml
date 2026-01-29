@@ -1,4 +1,325 @@
-﻿@*
+@model Project_Cinema.ViewModels.PaymentViewModel
+
+@{
+    ViewData["Title"] = "Thanh toán";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/booking.css" />
+    <link rel="stylesheet" href="~/css/payment.css" />
+}
+
+<script>
+    window.__paymentBookingId = @Model.BookingId;
+</script>
+
+<!-- Booking Progress Bar -->
+<section class="booking-progress">
+    <div class="container">
+        <div class="progress-steps">
+            <div class="progress-step completed">
+                <div class="step-icon"><i class="fas fa-check"></i></div>
+                <div class="step-content"><span class="step-label">Chọn phim</span></div>
+            </div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed">
+                <div class="step-icon"><i class="fas fa-check"></i></div>
+                <div class="step-content"><span class="step-label">Chọn lịch chiếu</span></div>
+            </div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed">
+                <div class="step-icon"><i class="fas fa-check"></i></div>
+                <div class="step-content"><span class="step-label">Chọn ghế</span></div>
+            </div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step active">
+                <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                <div class="step-content"><span class="step-label">Thanh toán</span></div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step">
+                <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="step-content"><span class="step-label">Xác nhận</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Payment Status Notification -->
+<section class="payment-status-section" id="paymentStatusSection" style="display: none;">
+    <div class="container">
+        <div class="payment-status" id="paymentStatus">
+            <div class="status-icon">
+                <i class="fas fa-spinner fa-spin"></i>
+            </div>
+            <div class="status-content">
+                <h3 class="status-title" id="statusTitle">Đang xử lý thanh toán...</h3>
+                <p class="status-message" id="statusMessage">Vui lòng đợi trong giây lát</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="payment-main">
+    <div class="container">
+        <div class="payment-layout">
+            <!-- Left Column: Forms -->
+            <div class="payment-content">
+                <!-- Order Summary Section (Rút gọn) -->
+                <div class="order-summary-section">
+                    <h2 class="section-title-payment">
+                        <i class="fas fa-receipt"></i> Tóm tắt đơn hàng
+                    </h2>
+                    <div class="order-summary-compact-card">
+                        <div class="order-summary-compact-item">
+                            <i class="fas fa-film"></i>
+                            <div class="order-summary-compact-content">
+                                <span class="order-summary-label">Phim</span>
+                                <span class="order-summary-value" id="order-movie">@Model.MovieTitle</span>
+                            </div>
+                        </div>
+                        <div class="order-summary-compact-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <div class="order-summary-compact-content">
+                                <span class="order-summary-label">Thời gian</span>
+                                <span class="order-summary-value" id="order-datetime">@Model.StartsAt.ToString("HH:mm") - @Model.StartsAt.ToString("dd/MM/yyyy")</span>
+                            </div>
+                        </div>
+                        <div class="order-summary-compact-item">
+                            <i class="fas fa-chair"></i>
+                            <div class="order-summary-compact-content">
+                                <span class="order-summary-label">Ghế</span>
+                                <div class="order-summary-seats" id="order-seats-compact">
+                                    @foreach (var seat in Model.SeatCodes)
+                                    {
+                                        <span class="seat-badge-compact">@seat</span>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Information Section -->
+                <div class="customer-info-payment-section">
+                    <h2 class="section-title-payment">
+                        <i class="fas fa-user"></i> Thông tin khách hàng
+                    </h2>
+                    <div class="customer-form-payment-card">
+                        <form id="customerFormPayment" class="customer-form-payment">
+                            <div class="form-row-payment">
+                                <div class="form-group-payment">
+                                    <label for="customer-name-payment">Họ và tên <span class="required">*</span></label>
+                                    <input type="text" id="customer-name-payment" class="form-input-payment" placeholder="Nhập họ và tên" required value="@Model.FullName">
+                                </div>
+                                <div class="form-group-payment">
+                                    <label for="customer-phone-payment">Số điện thoại <span class="required">*</span></label>
+                                    <input type="tel" id="customer-phone-payment" class="form-input-payment" placeholder="Nhập số điện thoại" required value="@Model.Phone">
+                                </div>
+                            </div>
+                            <div class="form-group-payment">
+                                <label for="customer-email-payment">Email <span class="required">*</span></label>
+                                <input type="email" id="customer-email-payment" class="form-input-payment" placeholder="Nhập email của bạn" required value="@Model.Email">
+                                <small class="form-hint-payment">Thông tin vé sẽ được gửi đến email này</small>
+                            </div>
+                            <div class="customer-info-note">
+                                <i class="fas fa-info-circle"></i>
+                                <span>Thông tin này có thể chỉnh sửa nếu cần.</span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Payment Method Section -->
+                <div class="payment-method-payment-section">
+                    <h2 class="section-title-payment">
+                        <i class="fas fa-wallet"></i> Phương thức thanh toán
+                    </h2>
+                    <div class="payment-methods-payment-card">
+                        <div class="payment-methods-payment">
+                            <label class="payment-method-payment">
+                                <input type="radio" name="payment-method-payment" value="momo" checked onchange="showPaymentDetails('momo')">
+                                <div class="payment-method-content-payment">
+                                    <div class="payment-icon-payment"><i class="fas fa-mobile-alt"></i></div>
+                                    <div class="payment-info-payment">
+                                        <span class="payment-name-payment">Ví điện tử MoMo</span>
+                                        <span class="payment-desc-payment">Mock thanh toán nhanh</span>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="payment-method-payment">
+                                <input type="radio" name="payment-method-payment" value="vnpay" onchange="showPaymentDetails('vnpay')">
+                                <div class="payment-method-content-payment">
+                                    <div class="payment-icon-payment"><i class="fas fa-wallet"></i></div>
+                                    <div class="payment-info-payment">
+                                        <span class="payment-name-payment">VNPay</span>
+                                        <span class="payment-desc-payment">Mock cổng VNPay</span>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="payment-method-payment">
+                                <input type="radio" name="payment-method-payment" value="banking" onchange="showPaymentDetails('banking')">
+                                <div class="payment-method-content-payment">
+                                    <div class="payment-icon-payment"><i class="fas fa-university"></i></div>
+                                    <div class="payment-info-payment">
+                                        <span class="payment-name-payment">Thẻ ngân hàng</span>
+                                        <span class="payment-desc-payment">Mock Visa/Master</span>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <label class="payment-method-payment">
+                                <input type="radio" name="payment-method-payment" value="counter" onchange="showPaymentDetails('counter')">
+                                <div class="payment-method-content-payment">
+                                    <div class="payment-icon-payment"><i class="fas fa-store"></i></div>
+                                    <div class="payment-info-payment">
+                                        <span class="payment-name-payment">Thanh toán tại quầy</span>
+                                        <span class="payment-desc-payment">Mock trả tại rạp</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Details Section -->
+                <div class="payment-details-section" id="paymentDetailsSection">
+                    <h2 class="section-title-payment">
+                        <i class="fas fa-info-circle"></i> Chi tiết thanh toán
+                    </h2>
+
+                    <div class="payment-details-card" id="momoDetails" style="display: none;">
+                        <div class="form-group-payment">
+                            <label for="momo-phone">SĐT MoMo</label>
+                            <input type="tel" id="momo-phone" class="form-input-payment" placeholder="Nhập SĐT MoMo">
+                        </div>
+                        <div class="payment-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Mock: không gọi API thật.</span>
+                        </div>
+                    </div>
+
+                    <div class="payment-details-card" id="vnpayDetails" style="display: none;">
+                        <div class="form-group-payment">
+                            <label for="vnpay-bank">Ngân hàng</label>
+                            <select id="vnpay-bank" class="form-input-payment">
+                                <option value="VCB">Vietcombank</option>
+                                <option value="TCB">Techcombank</option>
+                                <option value="ACB">ACB</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="payment-details-card" id="bankingDetails" style="display: none;">
+                        <div class="form-group-payment">
+                            <label for="card-number">Số thẻ</label>
+                            <input type="text" id="card-number" class="form-input-payment" placeholder="0000 0000 0000 0000">
+                        </div>
+                        <div class="form-row-payment">
+                            <div class="form-group-payment">
+                                <label for="card-name">Tên chủ thẻ</label>
+                                <input type="text" id="card-name" class="form-input-payment" placeholder="NGUYEN VAN A">
+                            </div>
+                            <div class="form-group-payment">
+                                <label for="card-expiry">MM/YY</label>
+                                <input type="text" id="card-expiry" class="form-input-payment" placeholder="12/28">
+                            </div>
+                        </div>
+                        <div class="form-group-payment">
+                            <label for="card-cvv">CVV</label>
+                            <input type="text" id="card-cvv" class="form-input-payment" placeholder="123">
+                        </div>
+                    </div>
+
+                    <div class="payment-details-card" id="counterDetails" style="display: none;">
+                        <div class="payment-note">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Bạn sẽ thanh toán tại quầy trước giờ chiếu.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Terms and Confirmation Section -->
+                <div class="terms-payment-section">
+                    <div class="terms-payment-card">
+                        <label class="terms-checkbox-payment">
+                            <input type="checkbox" id="termsCheckboxPayment" required>
+                            <span class="checkbox-custom-payment"></span>
+                            <span class="terms-text-payment">
+                                Tôi đã đọc và đồng ý với Điều khoản và Chính sách thanh toán
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Summary -->
+            <div class="payment-sidebar">
+                <div class="payment-summary-payment-card">
+                    <h3 class="summary-title-payment">
+                        <i class="fas fa-receipt"></i> Chi tiết chi phí
+                    </h3>
+                    <div class="summary-content-payment">
+                        <div class="summary-item-payment">
+                            <span class="summary-label-payment">Giá vé:</span>
+                            <span class="summary-value-payment" id="summary-ticket-price-payment">@Model.TotalAmount.ToString("N0")đ</span>
+                        </div>
+                        <div class="summary-item-payment">
+                            <span class="summary-label-payment">Phụ thu:</span>
+                            <span class="summary-value-payment" id="summary-surcharge-payment">0đ</span>
+                        </div>
+                        <div class="summary-item-payment">
+                            <span class="summary-label-payment">Khuyến mãi:</span>
+                            <span class="summary-value-payment discount-payment" id="summary-discount-payment">-0đ</span>
+                        </div>
+                        <div class="summary-divider-payment"></div>
+                        <div class="summary-item-payment total-payment">
+                            <span class="summary-label-payment">Tổng cộng:</span>
+                            <span class="summary-value-payment" id="summary-total-payment">@Model.TotalAmount.ToString("N0")đ</span>
+                        </div>
+                        <div class="summary-note-payment">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Mock thanh toán - không trừ tiền thật</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Hidden POST form to server -->
+<form id="processPaymentForm" asp-controller="Payment" asp-action="Process" method="post" style="display:none;">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="BookingId" value="@Model.BookingId" />
+    <input type="hidden" name="Method" id="paymentMethodField" value="momo" />
+    <input type="hidden" name="FullName" id="paymentFullNameField" value="" />
+    <input type="hidden" name="Phone" id="paymentPhoneField" value="" />
+    <input type="hidden" name="Email" id="paymentEmailField" value="" />
+</form>
+
+<!-- Action Buttons Section -->
+<section class="action-buttons-payment">
+    <div class="container">
+        <div class="action-buttons-wrapper-payment">
+            <a asp-controller="Booking" asp-action="Checkout" asp-route-bookingId="@Model.BookingId" class="btn btn-secondary btn-action-payment">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+            <button type="button" class="btn btn-primary btn-action-payment" id="processPaymentBtn" onclick="processPayment()">
+                <i class="fas fa-lock"></i> Thanh toán
+            </button>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/payment.js"></script>
+}
+
+@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{

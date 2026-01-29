@@ -1,69 +1,55 @@
 // Seat Selection Page Functionality
 
-// Seat configuration
-const seatConfig = {
-    rows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L'],
-    seatsPerRow: 12,
-    vipRows: ['A', 'B'],
-    occupiedSeats: [
-        'A1', 'A2', 'A3', 'B5', 'B6', 'C10', 'C11', 'C12',
-        'D3', 'D4', 'E7', 'E8', 'F1', 'F2', 'G9', 'G10',
-        'H4', 'H5', 'I11', 'I12', 'J6', 'J7', 'K2', 'K3',
-        'L8', 'L9'
-    ],
-    regularPrice: 150000,
-    vipPrice: 250000
-};
+// Data injected from server (Seat/Index)
+const seatData = window.__seatData || { rows: [] };
 
+// Selected seat codes
 let selectedSeats = [];
+// Map: seatCode -> DOM element
 let seatMap = {};
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
-    loadBookingData();
     generateSeatMap();
     updateSummary();
     startTimer();
+
+    // Resume after login (avoid GET /Seat/Hold -> 405)
+    const params = new URLSearchParams(window.location.search);
+    const shouldResume = params.get('resume') === '1';
+    const isAuth = !!window.__isAuthenticated;
+    if (shouldResume && isAuth) {
+        try {
+            const raw = sessionStorage.getItem('pendingSeatSelection');
+            if (raw) {
+                const pending = JSON.parse(raw);
+                const showtimeId = (seatData && seatData.showtimeId) ? seatData.showtimeId : null;
+                if (pending && pending.showtimeId && pending.showtimeId === showtimeId && Array.isArray(pending.codes)) {
+                    pending.codes.forEach(code => {
+                        if (seatMap[code] && !seatMap[code].disabled) {
+                            toggleSeat(code);
+                        }
+                    });
+                    // Auto submit if we have seats
+                    if (selectedSeats.length > 0) {
+                        continueToPayment();
+                    }
+                }
+            }
+        } catch {
+            // ignore
+        }
+    }
 });
-
-// Load booking data from sessionStorage
-function loadBookingData() {
-    const bookingData = sessionStorage.getItem('bookingData');
-    if (bookingData) {
-        const data = JSON.parse(bookingData);
-        updateShowtimeInfo(data);
-    }
-}
-
-// Update showtime information
-function updateShowtimeInfo(data) {
-    if (data.movie) {
-        document.getElementById('info-movie').textContent = data.movie;
-        document.getElementById('summary-movie-seat').textContent = data.movie;
-    }
-    if (data.cinema) {
-        document.getElementById('info-cinema').textContent = data.cinema;
-        document.getElementById('summary-cinema-seat').textContent = data.cinema;
-    }
-    if (data.date) {
-        document.getElementById('info-date').textContent = data.date;
-    }
-    if (data.time) {
-        document.getElementById('info-time').textContent = data.time;
-        const showtimeText = `${data.time} - ${data.date}`;
-        document.getElementById('summary-showtime-seat').textContent = showtimeText;
-    }
-    if (data.format) {
-        // Format info can be used if needed
-    }
-}
 
 // Generate seat map
 function generateSeatMap() {
     const seatMapContainer = document.getElementById('seatMap');
     seatMapContainer.innerHTML = '';
     
-    seatConfig.rows.forEach((row, rowIndex) => {
+    const rows = (seatData.rows || []);
+    rows.forEach((rowObj) => {
+        const row = rowObj.row;
         const rowDiv = document.createElement('div');
         rowDiv.className = 'seat-row';
         
@@ -76,22 +62,27 @@ function generateSeatMap() {
         // Seats container
         const seatsContainer = document.createElement('div');
         seatsContainer.className = 'seats-in-row';
-        
-        for (let seatNum = 1; seatNum <= seatConfig.seatsPerRow; seatNum++) {
-            const seatId = `${row}${seatNum}`;
-            const isOccupied = seatConfig.occupiedSeats.includes(seatId);
-            const isVip = seatConfig.vipRows.includes(row);
-            
-            // Add aisle spacing
+
+        const seats = rowObj.seats || [];
+        seats.forEach((seatObj) => {
+            const seatCode = seatObj.code;
+            const seatDbId = seatObj.seatId;
+            const seatNum = seatObj.number;
+            const isOccupied = !!seatObj.isUnavailable;
+            const seatType = (seatObj.seatType || 'regular');
+            const price = Number(seatObj.price || 0);
+
+            // Add aisle spacing like template (after 6 seats)
             if (seatNum === 7) {
                 const aisle = document.createElement('div');
                 aisle.className = 'aisle';
                 seatsContainer.appendChild(aisle);
             }
-            
+
             const seat = document.createElement('button');
             seat.className = 'seat';
-            seat.dataset.seatId = seatId;
+            seat.dataset.seatId = seatCode; // keep template naming
+            seat.dataset.seatDbId = String(seatDbId);
             seat.dataset.row = row;
             seat.dataset.number = seatNum;
             seat.textContent = seatNum;
@@ -99,23 +90,24 @@ function generateSeatMap() {
             if (isOccupied) {
                 seat.classList.add('occupied');
                 seat.disabled = true;
-            } else if (isVip) {
-                seat.classList.add('vip');
-                seat.dataset.price = seatConfig.vipPrice;
-                seat.dataset.originalType = 'vip';
             } else {
-                seat.classList.add('available');
-                seat.dataset.price = seatConfig.regularPrice;
-                seat.dataset.originalType = 'available';
+                if (seatType === 'vip' || seatType === 'couple') {
+                    seat.classList.add('vip');
+                    seat.dataset.originalType = 'vip';
+                } else {
+                    seat.classList.add('available');
+                    seat.dataset.originalType = 'available';
+                }
+                seat.dataset.price = String(price);
             }
             
             seat.addEventListener('click', function() {
-                toggleSeat(seatId);
+                toggleSeat(seatCode);
             });
             
             seatsContainer.appendChild(seat);
-            seatMap[seatId] = seat;
-        }
+            seatMap[seatCode] = seat;
+        });
         
         rowDiv.appendChild(seatsContainer);
         seatMapContainer.appendChild(rowDiv);
@@ -216,29 +208,49 @@ function continueToPayment() {
         alert('Vui lòng chọn ít nhất một ghế!');
         return;
     }
-    
-    // Prepare booking data
-    const bookingData = {
-        movie: document.getElementById('summary-movie-seat').textContent,
-        showtime: document.getElementById('summary-showtime-seat').textContent,
-        cinema: document.getElementById('summary-cinema-seat').textContent,
-        room: document.getElementById('summary-room-seat').textContent,
-        seats: selectedSeats,
-        ticketCount: selectedSeats.length,
-        totalPrice: document.getElementById('total-price').textContent
-    };
-    
-    // Store in sessionStorage
-    sessionStorage.setItem('seatSelection', JSON.stringify(bookingData));
-    
-    // Redirect to payment page (if exists)
-    // window.location.href = 'payment.html';
-    alert('Chuyển đến trang thanh toán...\n\n' + JSON.stringify(bookingData, null, 2));
+
+    // If not logged in: store selection then go to login with returnUrl back to Seat/Index
+    const isAuth = !!window.__isAuthenticated;
+    if (!isAuth) {
+        try {
+            sessionStorage.setItem('pendingSeatSelection', JSON.stringify({
+                showtimeId: seatData.showtimeId,
+                codes: selectedSeats
+            }));
+        } catch {
+            // ignore
+        }
+        if (window.__loginUrl) {
+            window.location.href = window.__loginUrl;
+            return;
+        }
+    }
+
+    const form = document.getElementById('holdForm');
+    const container = document.getElementById('selectedSeatInputs');
+    if (!form || !container) return;
+
+    container.innerHTML = '';
+    selectedSeats.forEach(code => {
+        const btn = seatMap[code];
+        const dbId = btn?.dataset?.seatDbId;
+        if (!dbId) return;
+
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'SelectedSeatIds';
+        input.value = dbId;
+        container.appendChild(input);
+    });
+
+    // clear pending selection on success path
+    try { sessionStorage.removeItem('pendingSeatSelection'); } catch { }
+    form.submit();
 }
 
 // Start timer for seat holding
 function startTimer() {
-    let timeLeft = 300; // 5 minutes in seconds
+    let timeLeft = 600; // 10 minutes in seconds
     
     const timerInterval = setInterval(function() {
         const minutes = Math.floor(timeLeft / 60);

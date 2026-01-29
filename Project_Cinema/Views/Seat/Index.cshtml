@@ -1,5 +1,255 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+@using System.Text.Json
+@model Project_Cinema.ViewModels.SeatSelectionViewModel
+
 @{
+    ViewData["Title"] = "Chọn ghế";
+    var error = TempData["SeatError"] as string;
+
+    var seatRowsForJs = Model.Rows.Select(row => new
+    {
+        row = row.Row,
+        seats = row.Seats.Select(seat => new
+        {
+            seatId = seat.SeatId,
+            code = seat.Code,
+            number = seat.Number,
+            seatType = seat.SeatType,
+            isUnavailable = seat.IsUnavailable,
+            price = seat.Price
+        })
+    });
+
+    var jsPayload = JsonSerializer.Serialize(new
+    {
+        showtimeId = Model.ShowtimeId,
+        basePrice = Model.BasePrice,
+        rows = seatRowsForJs
+    });
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/seat.css" />
+}
+
+<script>
+    window.__seatData = @Html.Raw(jsPayload);
+    window.__isAuthenticated = @(User.Identity != null && User.Identity.IsAuthenticated ? "true" : "false");
+    window.__seatResumeUrl = "@Url.Action("Index", "Seat", new { showtimeId = Model.ShowtimeId, resume = 1 })";
+    window.__loginUrl = "@Url.Action("Login", "Account", new { returnUrl = Url.Action("Index", "Seat", new { showtimeId = Model.ShowtimeId, resume = 1 }) })";
+</script>
+
+<!-- Booking Progress Bar -->
+<section class="booking-progress">
+    <div class="container">
+        <div class="progress-steps">
+            <div class="progress-step completed">
+                <div class="step-icon"><i class="fas fa-check"></i></div>
+                <div class="step-content"><span class="step-label">Chọn phim</span></div>
+            </div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step completed">
+                <div class="step-icon"><i class="fas fa-check"></i></div>
+                <div class="step-content"><span class="step-label">Chọn lịch chiếu</span></div>
+            </div>
+            <div class="progress-line completed"></div>
+            <div class="progress-step active">
+                <div class="step-icon"><i class="fas fa-chair"></i></div>
+                <div class="step-content"><span class="step-label">Chọn ghế</span></div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step">
+                <div class="step-icon"><i class="fas fa-credit-card"></i></div>
+                <div class="step-content"><span class="step-label">Thanh toán</span></div>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step">
+                <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                <div class="step-content"><span class="step-label">Xác nhận</span></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Showtime Information Section -->
+<section class="showtime-info">
+    <div class="container">
+        <div class="showtime-info-card">
+            <div class="info-item">
+                <i class="fas fa-film"></i>
+                <div class="info-content">
+                    <span class="info-label">Phim</span>
+                    <span class="info-value" id="info-movie">@Model.MovieTitle</span>
+                </div>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-item">
+                <i class="fas fa-building"></i>
+                <div class="info-content">
+                    <span class="info-label">Rạp</span>
+                    <span class="info-value" id="info-cinema">@Model.CinemaName</span>
+                </div>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-item">
+                <i class="fas fa-door-open"></i>
+                <div class="info-content">
+                    <span class="info-label">Phòng chiếu</span>
+                    <span class="info-value" id="info-room">@Model.RoomName</span>
+                </div>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-item">
+                <i class="fas fa-calendar"></i>
+                <div class="info-content">
+                    <span class="info-label">Ngày chiếu</span>
+                    <span class="info-value" id="info-date">@Model.StartsAt.ToString("dd/MM/yyyy")</span>
+                </div>
+            </div>
+            <div class="info-divider"></div>
+            <div class="info-item">
+                <i class="fas fa-clock"></i>
+                <div class="info-content">
+                    <span class="info-label">Suất chiếu</span>
+                    <span class="info-value" id="info-time">@Model.StartsAt.ToString("HH:mm")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="seat-selection-main">
+    <div class="container">
+        @if (!string.IsNullOrWhiteSpace(error))
+        {
+            <div class="alert alert-danger">@error</div>
+        }
+
+        <form id="holdForm" asp-controller="Seat" asp-action="Hold" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="ShowtimeId" value="@Model.ShowtimeId" />
+            <div id="selectedSeatInputs"></div>
+        </form>
+
+        <div class="seat-layout">
+            <!-- Left Column: Seat Map -->
+            <div class="seat-map-section">
+                <div class="screen-indicator">
+                    <div class="screen-shape">
+                        <i class="fas fa-tv"></i>
+                    </div>
+                    <p class="screen-text">Màn hình</p>
+                </div>
+
+                <div class="seat-map-container">
+                    <div class="seat-map" id="seatMap">
+                        <!-- generated by seat.js -->
+                    </div>
+                </div>
+
+                <div class="seat-legend">
+                    <h4 class="legend-title">Chú thích</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-seat available"></div>
+                            <span>Ghế trống</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-seat selected"></div>
+                            <span>Đang chọn</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-seat occupied"></div>
+                            <span>Đã đặt / Đang giữ</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-seat vip"></div>
+                            <span>VIP</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Summary & Notes -->
+            <div class="seat-sidebar">
+                <div class="booking-summary-seat">
+                    <h3 class="summary-title-seat">
+                        <i class="fas fa-receipt"></i> Tóm tắt đặt vé
+                    </h3>
+                    <div class="summary-content-seat">
+                        <div class="summary-item-seat">
+                            <span class="summary-label-seat">Phim:</span>
+                            <span class="summary-value-seat" id="summary-movie-seat">@Model.MovieTitle</span>
+                        </div>
+                        <div class="summary-item-seat">
+                            <span class="summary-label-seat">Suất chiếu:</span>
+                            <span class="summary-value-seat" id="summary-showtime-seat">@Model.StartsAt.ToString("HH:mm") - @Model.StartsAt.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        <div class="summary-item-seat">
+                            <span class="summary-label-seat">Rạp:</span>
+                            <span class="summary-value-seat" id="summary-cinema-seat">@Model.CinemaName</span>
+                        </div>
+                        <div class="summary-item-seat">
+                            <span class="summary-label-seat">Phòng:</span>
+                            <span class="summary-value-seat" id="summary-room-seat">@Model.RoomName</span>
+                        </div>
+                        <div class="summary-divider-seat"></div>
+                        <div class="summary-item-seat">
+                            <span class="summary-label-seat">Ghế đã chọn:</span>
+                            <div class="selected-seats-list" id="selectedSeatsList">
+                                <p class="no-seats">Chưa chọn ghế</p>
+                            </div>
+                        </div>
+                        <div class="summary-item-seat">
+                            <span class="summary-label-seat">Số lượng vé:</span>
+                            <span class="summary-value-seat" id="ticket-count">0</span>
+                        </div>
+                        <div class="summary-divider-seat"></div>
+                        <div class="summary-item-seat total">
+                            <span class="summary-label-seat">Tổng tiền:</span>
+                            <span class="summary-value-seat" id="total-price">0đ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="notes-section">
+                    <h3 class="notes-title">
+                        <i class="fas fa-info-circle"></i> Lưu ý
+                    </h3>
+                    <div class="notes-content">
+                        <div class="note-item">
+                            <i class="fas fa-lightbulb"></i>
+                            <p>Khuyến nghị chọn ghế ở khu vực trung tâm để có trải nghiệm xem phim tốt nhất.</p>
+                        </div>
+                        <div class="note-item">
+                            <i class="fas fa-clock"></i>
+                            <p>Bạn có <strong>10 phút</strong> để hoàn tất việc chọn ghế. Sau đó ghế sẽ được giải phóng.</p>
+                        </div>
+                        <div class="note-item">
+                            <i class="fas fa-star"></i>
+                            <p>Ghế VIP có chất lượng tốt hơn với không gian rộng và tiện nghi cao cấp.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Action Buttons Section -->
+<section class="action-buttons">
+    <div class="container">
+        <div class="action-buttons-wrapper">
+            <a asp-controller="Showtime" asp-action="Index" asp-route-movieId="@Model.MovieId" class="btn btn-secondary btn-action">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+            <button class="btn btn-primary btn-action" id="continuePaymentBtn" onclick="continueToPayment()" disabled>
+                Tiếp tục thanh toán <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script src="~/js/seat.js"></script>
 }

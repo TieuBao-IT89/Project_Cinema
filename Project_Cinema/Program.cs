@@ -9,7 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Connection db
 builder.Services.AddDbContext<DataContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration["ConnectionStrings:ConnectedDb"]);
+    // Use a conservative SQL Server compatibility level to avoid OPENJSON issues
+    // on older SQL Server / lower database compatibility settings.
+    options.UseSqlServer(
+        builder.Configuration["ConnectionStrings:ConnectedDb"],
+        sqlOptions => sqlOptions.UseCompatibilityLevel(120));
 });
 
 // Add services to the container.
@@ -26,6 +30,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 
 var app = builder.Build();
 
+// Seed sample data for quick UI testing
+await SeedData.EnsureSeededAsync(app.Services);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

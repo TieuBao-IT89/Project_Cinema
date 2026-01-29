@@ -17,27 +17,82 @@ namespace Project_Cinema.Areas.Admin.Controllers
             _dataContext = dataContext;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(long? roomId = null)
         {
             ViewData["AdminTitle"] = "Sơ đồ ghế";
             ViewData["AdminActive"] = "Seats";
 
-            var items = await (from seat in _dataContext.Seats.AsNoTracking()
-                               join room in _dataContext.Rooms.AsNoTracking() on seat.RoomId equals room.RoomId
+            var rooms = await (from room in _dataContext.Rooms.AsNoTracking()
                                join cinema in _dataContext.Cinemas.AsNoTracking() on room.CinemaId equals cinema.CinemaId
-                               orderby cinema.CinemaName, room.RoomName, seat.SeatRow, seat.SeatNumber
-                               select new SeatIndexItem
+                               orderby cinema.CinemaName, room.RoomName
+                               select new SeatRoomOption
                                {
-                                   SeatId = seat.SeatId,
+                                   RoomId = room.RoomId,
                                    CinemaName = cinema.CinemaName,
-                                   RoomName = room.RoomName,
-                                   SeatRow = seat.SeatRow,
-                                   SeatNumber = seat.SeatNumber,
-                                   SeatType = seat.SeatType ?? "regular",
-                                   Status = seat.Status ?? "active"
+                                   RoomName = room.RoomName
                                }).ToListAsync();
 
-            return View(new SeatIndexViewModel { Items = items });
+            if (!rooms.Any())
+            {
+                return View(new AdminSeatMapViewModel());
+            }
+
+            var selectedRoomId = roomId ?? rooms.First().RoomId;
+            var selectedRoomLabel = rooms.FirstOrDefault(r => r.RoomId == selectedRoomId) is SeatRoomOption opt
+                ? $"{opt.CinemaName} - {opt.RoomName}"
+                : string.Empty;
+
+            var seatList = await _dataContext.Seats.AsNoTracking()
+                .Where(seat => seat.RoomId == selectedRoomId)
+                .OrderBy(seat => seat.SeatRow)
+                .ThenBy(seat => seat.SeatNumber)
+                .Select(seat => new SeatMapSeat
+                {
+                    SeatId = seat.SeatId,
+                    Row = seat.SeatRow,
+                    Number = seat.SeatNumber,
+                    SeatType = seat.SeatType ?? "regular",
+                    Status = seat.Status ?? "active"
+                })
+                .ToListAsync();
+
+            var rows = seatList
+                .GroupBy(seat => seat.Row)
+                .OrderBy(group => group.Key)
+                .Select(group => new SeatMapRow
+                {
+                    Row = group.Key,
+                    Seats = group.OrderBy(s => s.Number).ToList()
+                })
+                .ToList();
+
+            var selectedSeat = rows.FirstOrDefault()?.Seats.FirstOrDefault();
+
+            return View(new AdminSeatMapViewModel
+            {
+                Rooms = rooms,
+                SelectedRoomId = selectedRoomId,
+                SelectedRoomLabel = selectedRoomLabel,
+                Rows = rows,
+                SelectedSeat = selectedSeat
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateSeat(SeatUpdateRequest model)
+        {
+            var seat = await _dataContext.Seats.FindAsync(model.SeatId);
+            if (seat == null)
+            {
+                return NotFound(new { success = false, message = "Không tìm thấy ghế." });
+            }
+
+            seat.SeatType = model.SeatType;
+            seat.Status = model.Status;
+            await _dataContext.SaveChangesAsync();
+
+            return Ok(new { success = true });
         }
 
         [HttpGet]

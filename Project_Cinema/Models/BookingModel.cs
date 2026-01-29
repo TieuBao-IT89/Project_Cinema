@@ -35,7 +35,7 @@ namespace Project_Cinema.Models
         [Column("EXPIRES_AT")]
         public DateTime? ExpiresAt { get; set; }
 
-        [Column("CREATE_AT")]
+        [Column("CREATED_AT")]
         public DateTime CreatedAt { get; set; }
     }
 }

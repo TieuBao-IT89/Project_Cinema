@@ -2,52 +2,12 @@
 
 // Initialize page
 document.addEventListener('DOMContentLoaded', function() {
-    loadPaymentData();
     initializeFormValidation();
     initializeCardInputs();
     showPaymentDetails('momo'); // Show default payment method
 });
 
-// Load payment data from sessionStorage
-function loadPaymentData() {
-    // Load from seat selection or final booking
-    const seatSelection = sessionStorage.getItem('seatSelection');
-    const finalBooking = sessionStorage.getItem('finalBooking');
-    
-    let data = {};
-    
-    if (finalBooking) {
-        data = JSON.parse(finalBooking);
-        // Fill customer form if data exists
-        if (data.name) {
-            document.getElementById('customer-name-payment').value = data.name;
-        }
-        if (data.phone) {
-            document.getElementById('customer-phone-payment').value = data.phone;
-        }
-        if (data.email) {
-            document.getElementById('customer-email-payment').value = data.email;
-        }
-        if (data.paymentMethod) {
-            const radio = document.querySelector(`input[name="payment-method-payment"][value="${data.paymentMethod}"]`);
-            if (radio) {
-                radio.checked = true;
-                showPaymentDetails(data.paymentMethod);
-            }
-        }
-    } else if (seatSelection) {
-        data = JSON.parse(seatSelection);
-    } else {
-        // Fallback to booking data
-        const bookingData = sessionStorage.getItem('bookingData');
-        if (bookingData) {
-            data = JSON.parse(bookingData);
-        }
-    }
-    
-    updateOrderInfo(data);
-    calculatePaymentSummary(data);
-}
+// NOTE: In server version, page is already rendered with DB data.
 
 // Update order information display (Rút gọn)
 function updateOrderInfo(data) {
@@ -363,54 +323,26 @@ function processPayment() {
     
     // Show processing status
     showPaymentStatus('Đang xử lý thanh toán...', 'processing');
-    
-    // Disable button
+
     const processBtn = document.getElementById('processPaymentBtn');
     processBtn.disabled = true;
     processBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
-    
-    // Simulate payment processing
-    setTimeout(() => {
-        // Simulate payment success/failure (90% success rate)
-        const success = Math.random() > 0.1;
-        
-        if (success) {
-            // Payment success
-            showPaymentStatus('Thanh toán thành công! Đang chuyển hướng...', 'success');
-            
-            // Store final booking data
-            const finalBooking = {
-                ...formData,
-                paymentDetails,
-                orderInfo: {
-                    movie: document.getElementById('order-movie').textContent,
-                    cinema: document.getElementById('order-cinema').textContent,
-                    room: document.getElementById('order-room').textContent,
-                    date: document.getElementById('order-date').textContent,
-                    time: document.getElementById('order-time').textContent,
-                    seats: Array.from(document.querySelectorAll('.seat-badge-order')).map(b => b.textContent),
-                    quantity: parseInt(document.getElementById('order-quantity').textContent)
-                },
-                totalPrice: document.getElementById('summary-total-payment').textContent,
-                bookingDate: new Date().toISOString(),
-                paymentStatus: 'success'
-            };
-            
-            sessionStorage.setItem('finalBooking', JSON.stringify(finalBooking));
-            
-            // Redirect to confirmation page after 2 seconds
-            setTimeout(() => {
-                window.location.href = 'confirmation.html';
-            }, 2000);
-        } else {
-            // Payment failed
-            showPaymentStatus('Thanh toán thất bại. Vui lòng thử lại hoặc chọn phương thức thanh toán khác.', 'error');
-            
-            // Re-enable button
-            processBtn.disabled = false;
-            processBtn.innerHTML = '<i class="fas fa-lock"></i> Thanh toán';
-        }
-    }, 2000);
+
+    // Submit to server (mock payment)
+    const form = document.getElementById('processPaymentForm');
+    if (!form) return;
+
+    const methodField = document.getElementById('paymentMethodField');
+    const nameField = document.getElementById('paymentFullNameField');
+    const phoneField = document.getElementById('paymentPhoneField');
+    const emailField = document.getElementById('paymentEmailField');
+
+    if (methodField) methodField.value = formData.paymentMethod;
+    if (nameField) nameField.value = formData.name;
+    if (phoneField) phoneField.value = formData.phone;
+    if (emailField) emailField.value = formData.email;
+
+    setTimeout(() => form.submit(), 900);
 }
 
 // Show payment status

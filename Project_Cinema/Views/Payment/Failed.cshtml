@@ -1,1 +1,37 @@
-﻿
+@{
+    ViewData["Title"] = "Thanh toán thất bại";
+    var reason = ViewData["Reason"] as string ?? "Thanh toán thất bại.";
+    var bookingId = (long?)ViewData["BookingId"] ?? 0;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/payment-failed.css" />
+}
+
+<main class="payment-failed-section">
+    <div class="failed-container">
+        <div class="failed-icon">
+            <div class="icon-circle">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <div class="icon-glow"></div>
+        </div>
+
+        <div class="failed-content">
+            <h1 class="failed-title">Thanh toán thất bại</h1>
+            <p class="failed-description">@reason</p>
+        </div>
+
+        <div class="failed-actions">
+            <a asp-controller="Payment" asp-action="Index" asp-route-bookingId="@bookingId" class="btn-primary">
+                <i class="fas fa-redo"></i>
+                <span>Thử lại thanh toán</span>
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn-tertiary">
+                <i class="fas fa-home"></i>
+                <span>Về trang chủ</span>
+            </a>
+        </div>
+    </div>
+</main>
+

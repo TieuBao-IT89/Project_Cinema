@@ -1,0 +1,236 @@
+/* Admin Seats - Seat map UI */
+
+.seatmap-filter {
+    min-width: 320px;
+}
+
+.seatmap-section {
+    margin-top: 12px;
+}
+
+.seatmap-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2.2fr) minmax(0, 1fr);
+    gap: 18px;
+}
+
+.seatmap-card {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+    border: 1px solid #e8eef6;
+    border-radius: 18px;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    overflow: hidden;
+    position: relative;
+}
+
+.seatmap-card::after {
+    content: '';
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    top: 0;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #4f46e5 0%, #06b6d4 100%);
+    opacity: 0.55;
+}
+
+.seatmap-canvas-header,
+.seatmap-editor-header {
+    padding: 18px 18px 14px;
+    border-bottom: 1px solid #eef2f7;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.seatmap-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.seatmap-subtitle {
+    margin: 6px 0 0;
+    color: #64748b;
+    font-size: 0.92rem;
+}
+
+.seatmap-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    justify-content: flex-end;
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #475569;
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #cbd5e1;
+}
+.legend-dot.regular { background: #60a5fa; }
+.legend-dot.vip { background: #a78bfa; }
+.legend-dot.couple { background: #f472b6; }
+.legend-dot.inactive { background: #94a3b8; }
+
+.seatmap-screen {
+    margin: 18px auto 0;
+    width: min(520px, 92%);
+    text-align: center;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #eef2ff 0%, #ecfeff 100%);
+    border: 1px solid #e0e7ff;
+    color: #334155;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    font-size: 0.8rem;
+}
+
+.seatmap-rows {
+    padding: 18px;
+}
+
+.seatmap-row {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.seatmap-row-label {
+    font-weight: 900;
+    color: #0f172a;
+    opacity: 0.8;
+    text-align: center;
+}
+
+.seatmap-row-seats {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(38px, 44px);
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 6px;
+}
+
+.seat-btn {
+    appearance: none;
+    border: 1px solid #e2e8f0;
+    background: #ffffff;
+    color: #0f172a;
+    border-radius: 12px;
+    padding: 10px 0;
+    font-weight: 800;
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease, border-color 120ms ease;
+    box-shadow: 0 8px 18px rgba(15, 23, 42, 0.06);
+    user-select: none;
+    min-width: 42px;
+}
+
+.seat-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.10);
+    border-color: #cbd5e1;
+}
+
+.seat-btn.is-selected {
+    outline: 3px solid rgba(79, 70, 229, 0.25);
+    border-color: #818cf8;
+}
+
+/* Seat types */
+.seat-type-regular { background: linear-gradient(180deg, #ffffff 0%, #eff6ff 100%); }
+.seat-type-vip { background: linear-gradient(180deg, #ffffff 0%, #f5f3ff 100%); border-color: #ddd6fe; }
+.seat-type-couple { background: linear-gradient(180deg, #ffffff 0%, #fdf2f8 100%); border-color: #fbcfe8; }
+
+/* Status */
+.seat-status-inactive {
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+    color: #94a3b8;
+    border-style: dashed;
+    box-shadow: none;
+}
+
+.seatmap-editor-body {
+    padding: 18px;
+    display: grid;
+    gap: 14px;
+}
+
+.editor-kv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #eef2ff 0%, #ecfeff 100%);
+    border: 1px solid #e0e7ff;
+}
+
+.editor-kv .k {
+    color: #475569;
+    font-weight: 700;
+}
+
+.editor-kv .v {
+    color: #0f172a;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+}
+
+.editor-field {
+    display: grid;
+    gap: 8px;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.editor-toast {
+    display: none;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #334155;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.editor-toast.show {
+    display: block;
+}
+
+.empty-state {
+    padding: 18px;
+    color: #64748b;
+}
+
+@media (max-width: 1100px) {
+    .seatmap-grid {
+        grid-template-columns: 1fr;
+    }
+    .seatmap-filter { min-width: 240px; width: 100%; }
+}
+

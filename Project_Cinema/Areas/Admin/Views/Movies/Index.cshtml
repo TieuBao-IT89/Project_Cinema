@@ -65,7 +65,7 @@
                                     <td>@movie.Title</td>
                                     <td>@movie.DurationMin phút</td>
                                     <td>@(movie.ReleaseDate?.ToString("dd/MM/yyyy") ?? "--")</td>
-                                    <td>@movie.Status</td>
+                                    <td><span class="status-pill">@movie.Status</span></td>
                                     <td>
                                         <a asp-area="Admin" asp-controller="Movies" asp-action="Edit" asp-route-id="@movie.MovieId"
                                            class="btn btn-secondary btn-sm">

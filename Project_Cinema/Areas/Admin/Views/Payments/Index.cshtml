@@ -49,7 +49,7 @@
                                     <td>@item.UserName</td>
                                     <td>@item.Amount.ToString("N0")đ</td>
                                     <td>@item.Method</td>
-                                    <td>@item.Status</td>
+                                    <td><span class="status-pill">@item.Status</span></td>
                                     <td>@(item.PaidAt?.ToString("dd/MM/yyyy HH:mm") ?? "--")</td>
                                 </tr>
                             }

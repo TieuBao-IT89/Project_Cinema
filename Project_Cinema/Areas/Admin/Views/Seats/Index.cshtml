@@ -1,7 +1,11 @@
-@model Project_Cinema.ViewModels.SeatIndexViewModel
+@model Project_Cinema.ViewModels.AdminSeatMapViewModel
 
 @{
     ViewData["AdminTitle"] = "Sơ đồ ghế";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-seats-map.css" />
 }
 
 <main class="dashboard-content">
@@ -13,65 +17,115 @@
             <p class="section-subtitle">Quản lý ghế theo phòng chiếu</p>
         </div>
         <div class="page-header-right">
-            <a asp-area="Admin" asp-controller="Seats" asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus"></i> Thêm ghế
-            </a>
+            <form method="get" asp-area="Admin" asp-controller="Seats" asp-action="Index" class="seatmap-filter">
+                <select class="form-select" name="roomId" id="roomSelect">
+                    @foreach (var room in Model.Rooms)
+                    {
+                        <option value="@room.RoomId" selected="@(room.RoomId == Model.SelectedRoomId)">
+                            @room.CinemaName - @room.RoomName
+                        </option>
+                    }
+                </select>
+            </form>
         </div>
     </section>
 
-    <section class="table-section">
-        <div class="table-card">
-            <div class="table-header">
-                <h3 class="table-title">Danh sách ghế</h3>
+    @Html.AntiForgeryToken()
+
+    <section class="seatmap-section">
+        <div class="seatmap-grid">
+            <div class="seatmap-card seatmap-canvas">
+                <div class="seatmap-canvas-header">
+                    <div>
+                        <h3 class="seatmap-title">Seat map</h3>
+                        <p class="seatmap-subtitle">@Model.SelectedRoomLabel</p>
+                    </div>
+                    <div class="seatmap-legend">
+                        <span class="legend-item"><span class="legend-dot regular"></span> Regular</span>
+                        <span class="legend-item"><span class="legend-dot vip"></span> VIP</span>
+                        <span class="legend-item"><span class="legend-dot couple"></span> Couple</span>
+                        <span class="legend-item"><span class="legend-dot inactive"></span> Inactive</span>
+                    </div>
+                </div>
+
+                @if (!Model.Rows.Any())
+                {
+                    <div class="empty-state">Phòng này chưa có ghế. Hãy seed hoặc tạo ghế.</div>
+                }
+                else
+                {
+                    <div class="seatmap-screen">MÀN HÌNH</div>
+                    <div class="seatmap-rows">
+                        @foreach (var row in Model.Rows)
+                        {
+                            <div class="seatmap-row">
+                                <div class="seatmap-row-label">@row.Row</div>
+                                <div class="seatmap-row-seats">
+                                    @foreach (var seat in row.Seats)
+                                    {
+                                        var isSelected = Model.SelectedSeat != null && seat.SeatId == Model.SelectedSeat.SeatId;
+                                        <button type="button"
+                                                class="seat-btn seat-type-@seat.SeatType seat-status-@seat.Status @(isSelected ? "is-selected" : "")"
+                                                data-seat-id="@seat.SeatId"
+                                                data-seat-row="@seat.Row"
+                                                data-seat-number="@seat.Number"
+                                                data-seat-type="@seat.SeatType"
+                                                data-seat-status="@seat.Status">
+                                            @seat.Code
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
             </div>
-            <div class="table-body">
-                <table class="admin-table">
-                    <thead>
-                        <tr>
-                            <th>Rạp</th>
-                            <th>Phòng</th>
-                            <th>Hàng</th>
-                            <th>Số ghế</th>
-                            <th>Loại</th>
-                            <th>Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (!Model.Items.Any())
-                        {
-                            <tr>
-                                <td colspan="6" class="empty-row">Chưa có dữ liệu ghế.</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            @foreach (var seat in Model.Items)
-                            {
-                                <tr>
-                                    <td>@seat.CinemaName</td>
-                                    <td>@seat.RoomName</td>
-                                    <td>@seat.SeatRow</td>
-                                    <td>@seat.SeatNumber</td>
-                                    <td>@seat.SeatType</td>
-                                    <td>
-                                        <a asp-area="Admin" asp-controller="Seats" asp-action="Edit" asp-route-id="@seat.SeatId"
-                                           class="btn btn-secondary btn-sm">
-                                            Sửa
-                                        </a>
-                                        <form asp-area="Admin" asp-controller="Seats" asp-action="Delete" asp-route-id="@seat.SeatId"
-                                              method="post" style="display:inline-block">
-                                            @Html.AntiForgeryToken()
-                                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Xóa ghế này?');">
-                                                Xóa
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
+
+            <div class="seatmap-card seatmap-editor">
+                <div class="seatmap-editor-header">
+                    <h3 class="seatmap-title">Chỉnh sửa ghế</h3>
+                    <p class="seatmap-subtitle">Click vào ghế để chỉnh.</p>
+                </div>
+
+                <div class="seatmap-editor-body">
+                    <div class="editor-kv">
+                        <span class="k">Mã ghế</span>
+                        <span class="v" id="seatCode">@(Model.SelectedSeat?.Code ?? "--")</span>
+                    </div>
+
+                    <div class="editor-field">
+                        <label class="form-label">Loại ghế</label>
+                        <select class="form-select" id="seatType">
+                            <option value="regular">Regular</option>
+                            <option value="vip">VIP</option>
+                            <option value="couple">Couple</option>
+                        </select>
+                    </div>
+
+                    <div class="editor-field">
+                        <label class="form-label">Trạng thái</label>
+                        <select class="form-select" id="seatStatus">
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div class="form-help">
+                        Tip: dùng “Inactive” để khóa ghế (bảo trì/hỏng).
+                    </div>
+
+                    <div class="editor-actions">
+                        <button type="button" class="btn btn-primary" id="saveSeatBtn">Lưu</button>
+                        <a asp-area="Admin" asp-controller="Seats" asp-action="Create" class="btn btn-secondary">Thêm ghế</a>
+                    </div>
+
+                    <div class="editor-toast" id="editorToast" aria-live="polite"></div>
+                </div>
             </div>
         </div>
     </section>
 </main>
+
+@section Scripts {
+    <script src="~/js/admin-seats-map.js"></script>
+}
